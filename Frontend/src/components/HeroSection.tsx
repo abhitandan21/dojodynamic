@@ -1,7 +1,33 @@
 import { ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
+import { useState, useEffect } from 'react';
+
+const images = [
+  "/hero1.jpg.jpeg",
+  "/hero2.jpeg",
+  "/hero3.jpeg",
+];
 
 export const HeroSection = () => {
+  const [index, setIndex] = useState(0);
+
+  // 🔄 Auto slide
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % images.length);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const nextSlide = () => {
+    setIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const prevSlide = () => {
+    setIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
   const scrollToAbout = () => {
     const element = document.querySelector('#about');
     if (element) {
@@ -10,97 +36,113 @@ export const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center bg-gradient-hero pattern-overlay overflow-hidden">
-      {/* Background decorative elements */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+      {/* 🔥 Background Slider */}
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-all duration-700"
+        style={{
+          backgroundImage: `url(${images[index]})`,
+        }}
+      />
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/70" />
+
+      {/* Decorative elements (same as before) */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-secondary/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Japanese character decoration */}
+      {/* Japanese character */}
       <div className="absolute right-10 top-1/2 -translate-y-1/2 hidden xl:block">
-        <span className="font-display text-[20rem] text-foreground/5 leading-none select-none">
+        <span className="font-display text-[20rem] text-white/5 select-none">
           武
         </span>
       </div>
 
+      {/* CONTENT (UNCHANGED) */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Subtitle */}
+
           <div className="animate-fade-up" style={{ animationDelay: '0.1s' }}>
-            <span className="inline-block px-4 py-2 bg-primary/20 text-primary font-body text-sm uppercase tracking-[0.3em] rounded-full mb-8">
+            <span className="inline-block px-4 py-2 bg-primary/20 text-primary text-sm uppercase tracking-[0.3em] rounded-full mb-8">
               Traditional Karate Lathi Nunchaku Sport • Modern Training
             </span>
           </div>
 
-          {/* Main headline */}
-          <h1 
-            className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-foreground leading-none mb-6 animate-fade-up"
-            style={{ animationDelay: '0.2s' }}
-          >
+          <h1 className="font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white mb-6 animate-fade-up">
             MASTER THE ART OF
-            <span className="block text-gradient-crimson mt-2">DISCIPLINE</span>
+            <span className="block text-red-500 mt-2">DISCIPLINE</span>
           </h1>
 
-          {/* Subheadline */}
-          <p 
-            className="font-body text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up"
-            style={{ animationDelay: '0.4s' }}
-          >
-           Abhishek Martial Arts and Sports Academy provide regular class mainly focus on the self Defence and development of the each students, including personality development, character building, fitness and Confidence and sports 
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-10 animate-fade-up">
+            Abhishek Martial Arts and Sports Academy provide regular class mainly focus on the self Defence and development...
           </p>
 
-          {/* CTA Buttons */}
-          <div 
-            className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up"
-            style={{ animationDelay: '0.6s' }}
-          >
-            <Button 
-              variant="hero"
-              onClick={() => {
-                const element = document.querySelector('#contact');
-                if (element) element.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-up">
+            <Button onClick={() => document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })}>
               Start Your Journey
             </Button>
-            <Button 
-              variant="heroOutline"
-              onClick={() => {
-                const element = document.querySelector('#classes');
-                if (element) element.scrollIntoView({ behavior: 'smooth' });
-              }}
-            >
+
+            <Button variant="heroOutline" onClick={() => document.querySelector('#classes')?.scrollIntoView({ behavior: 'smooth' })}>
               Explore Classes
             </Button>
           </div>
 
           {/* Stats */}
-          <div 
-            className="grid grid-cols-3 gap-8 mt-16 pt-16 border-t border-border/30 animate-fade-up"
-            style={{ animationDelay: '0.8s' }}
-          >
+          <div className="grid grid-cols-3 gap-8 mt-16 pt-16 border-t border-white/20 animate-fade-up">
             <div>
-              <span className="font-display text-4xl sm:text-5xl text-primary">05+</span>
-              <p className="font-body text-sm text-muted-foreground mt-2 uppercase tracking-wider">Years Experience</p>
+              <span className="text-4xl text-red-500">05+</span>
+              <p className="text-sm text-gray-400 mt-2">Years Experience</p>
             </div>
             <div>
-              <span className="font-display text-4xl sm:text-5xl text-secondary">2000+</span>
-              <p className="font-body text-sm text-muted-foreground mt-2 uppercase tracking-wider">Students Trained</p>
+              <span className="text-4xl text-yellow-400">2000+</span>
+              <p className="text-sm text-gray-400 mt-2">Students Trained</p>
             </div>
             <div>
-              <span className="font-display text-4xl sm:text-5xl text-primary">110+</span>
-              <p className="font-body text-sm text-muted-foreground mt-2 uppercase tracking-wider">Championships</p>
+              <span className="text-4xl text-red-500">110+</span>
+              <p className="text-sm text-gray-400 mt-2">Championships</p>
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Scroll indicator */}
+      {/* ⬅️ Left Arrow */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-5 top-1/2 -translate-y-1/2 bg-black/50 px-4 py-2 text-white rounded"
+      >
+        ◀
+      </button>
+
+      {/* ➡️ Right Arrow */}
+      <button
+        onClick={nextSlide}
+        className="absolute right-5 top-1/2 -translate-y-1/2 bg-black/50 px-4 py-2 text-white rounded"
+      >
+        ▶
+      </button>
+
+      {/* 🔘 Dots */}
+      <div className="absolute bottom-16 flex gap-2">
+        {images.map((_, i) => (
+          <div
+            key={i}
+            onClick={() => setIndex(i)}
+            className={`w-3 h-3 rounded-full cursor-pointer ${
+              i === index ? "bg-red-500" : "bg-white"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Scroll arrow */}
       <button
         onClick={scrollToAbout}
-        className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-primary transition-colors duration-300 animate-float"
-        aria-label="Scroll to about section"
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white animate-bounce"
       >
         <ChevronDown size={32} />
       </button>

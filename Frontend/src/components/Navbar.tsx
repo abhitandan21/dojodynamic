@@ -16,14 +16,30 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
+  // ✅ NEW: user state
+  const [user, setUser] = useState<any>(null);
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
     window.addEventListener('scroll', handleScroll);
+
+    // ✅ check login
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // ✅ logout function
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.href = "/";
+  };
 
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
@@ -41,6 +57,7 @@ export const Navbar = () => {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
+
           {/* Logo */}
           <a
             href="#"
@@ -51,12 +68,13 @@ export const Navbar = () => {
             className="flex items-center gap-3 group"
           >
             <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson group-hover:scale-110 transition-transform duration-300">
-              {/*<span className="font-display text-2xl text-primary-foreground">龍</span>*/}
-              <img src="../public/logo-amsa.jpg" alt="" className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson group-hover:scale-110 transition-transform duration-300"/>
+              <img src="../public/logo-amsa.jpg" alt="" className="w-12 h-12 rounded-full" />
             </div>
             <div className="hidden sm:block">
               <span className="font-display text-2xl text-foreground tracking-wider">ABHISHEK</span>
-              <span className="font-display text-2xl text-primary tracking-wider ml-2">MARTIAL ARTS and SPORTS ACADEMY</span>
+              <span className="font-display text-2xl text-primary tracking-wider ml-2">
+                MARTIAL ARTS and SPORTS ACADEMY
+              </span>
             </div>
           </a>
 
@@ -71,9 +89,39 @@ export const Navbar = () => {
                 {link.label}
               </button>
             ))}
-            <Button variant="default" size="sm" onClick={() => scrollToSection('#contact')}>
-              Join Now
-            </Button>
+
+            {/* ✅ UPDATED BUTTON AREA */}
+            {!user ? (
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => (window.location.href = "/login")}
+              >
+                Login
+              </Button>
+            ) : (
+              <>
+                {user.role === "admin" ? (
+                  <Button
+                    size="sm"
+                    onClick={() => (window.location.href = "/admin")}
+                  >
+                    Admin Panel
+                  </Button>
+                ) : (
+                  <Button
+                    size="sm"
+                    onClick={() => (window.location.href = "/dashboard")}
+                  >
+                    Dashboard
+                  </Button>
+                )}
+
+                <Button variant="destructive" size="sm" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -102,10 +150,43 @@ export const Navbar = () => {
                 {link.label}
               </button>
             ))}
-            <div className="px-4 pt-2">
-              <Button variant="default" className="w-full" onClick={() => scrollToSection('#contact')}>
-                Join Now
-              </Button>
+
+            {/* ✅ MOBILE LOGIN AREA */}
+            <div className="px-4 pt-2 space-y-2">
+              {!user ? (
+                <Button
+                  className="w-full"
+                  onClick={() => (window.location.href = "/login")}
+                >
+                  Login
+                </Button>
+              ) : (
+                <>
+                  {user.role === "admin" ? (
+                    <Button
+                      className="w-full"
+                      onClick={() => (window.location.href = "/admin")}
+                    >
+                      Admin Panel
+                    </Button>
+                  ) : (
+                    <Button
+                      className="w-full"
+                      onClick={() => (window.location.href = "/dashboard")}
+                    >
+                      Dashboard
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="destructive"
+                    className="w-full"
+                    onClick={handleLogout}
+                  >
+                    Logout
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>

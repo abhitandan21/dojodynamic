@@ -127,7 +127,7 @@ export const ClassesSection = () => {
             ))}
           </div>
           <p className="font-body text-center text-muted-foreground max-w-2xl mx-auto">
-            Our belt system follows the traditional Shotokan progression, with regular testing 
+            Our belt system follows the traditional Shito Ryu  progression, with regular testing 
             opportunities and clear requirements for advancement.
           </p>
         </div>
