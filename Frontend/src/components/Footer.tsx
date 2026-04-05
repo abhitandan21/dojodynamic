@@ -24,10 +24,10 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { icon: Facebook, href: '#', label: 'Facebook' },
+  { icon: Facebook, href: 'https://www.facebook.com/share/1KWqzr53HR/', label: 'Facebook' },
   { icon: Instagram, href: 'https://www.instagram.com/abhishekmartialartsacademy26?utm_source=qr&igsh=eGx0cjd3N2pxNjAw', label: 'Instagram' },
-  { icon: Youtube, href: '#', label: 'YouTube' },
-  { icon: Twitter, href: '#', label: 'Twitter' },
+  { icon: Youtube, href: 'https://youtube.com/@abhishekmartialartsandsportsac?si=zDNOIwQSF5S24dh4', label: 'YouTube' },
+ 
 ];
 
 export const Footer = () => {

@@ -1,4 +1,4 @@
-import Certificate from "../models/Certificate.js";
+import Certificate from "../model/Certificate.js";
 
 export const addCertificate = async (req, res) => {
   const cert = await Certificate.create(req.body);

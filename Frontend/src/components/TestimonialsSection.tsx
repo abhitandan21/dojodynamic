@@ -21,21 +21,21 @@ const testimonials = [
     role: 'Competition Team Member',
     content: "Training with the competition team has taken my karate to levels I never imagined. I've competed nationally and even internationally, all thanks to the elite coaching and rigorous training at Dragon Dojo.",
     rating: 5,
-    years: '6 years',
+    years: '2 years',
   },
   {
     name: 'ASHUTOSH TRIPATHY',
     role: 'Adult Student - Black Belt',
     content: "Earning my black belt at Dragon Dojo was the proudest achievement of my life. The journey taught me that with persistence and proper guidance, anything is possible. The dojo has become my second family.",
     rating: 5,
-    years: '7 years',
+    years: '4 years',
   },
   {
     name: 'RAJSHREE VERMA',
     role: 'Parent of Two',
     content: "Both my children train here, and the family atmosphere is what keeps us coming back. The values they learn—respect, discipline, perseverance—have made them better students and better people.",
     rating: 5,
-    years: '3 years',
+    years: '4 years',
   },
 ];
 

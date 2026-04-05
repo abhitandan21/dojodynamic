@@ -8,48 +8,113 @@ const galleryItems = [
     category: 'Training',
     src: '/Tranning Session.jpeg'
   },
-  {
+   {
     type: 'image',
-    title: 'Belt Ceremony',
-    category: 'Events',
-    src: 'Belt Caremony.jpeg'
+    title: 'Training Session',
+    category: 'Training',
+    src: '/tra1.jpeg'
+  },
+   {
+    type: 'image',
+    title: 'Training Session',
+    category: 'Training',
+    src: '/tra2.jpeg'
+  },
+   {
+    type: 'image',
+    title: 'Training Session',
+    category: 'Training',
+    src: '/tra3.jpeg'
+  },
+    {
+    type: 'image',
+    title: 'Training Session',
+    category: 'Training',
+    src: '/sparring.jpeg'
   },
   {
     type: 'image',
-    title: 'Kata Performance',
+    title: 'Self Defence Program for womens ',
+    category: 'Events',
+    src: 'e3.jpeg'
+  },
+   
+   {
+    type: 'image',
+    title: 'Belt Ceremony',
+    category: 'Student of the Month',
+    src: 'e4.jpeg'
+  },
+   {
+    type: 'image',
+    title: 'Marathon',
+    category: 'Events',
+    src: 'e6.jpeg'
+  },
+   {
+    type: 'image',
+    title: 'Award Ceremony for National Champions',
+    category: 'Events',
+    src: 'e8.jpeg'
+  },
+  {
+    type: 'image',
+    title: 'Won 100+ Medals in National Championship',
     category: 'Competition',
     src: '/victory-2.jpeg'
   },
-  {
+   {
     type: 'image',
-    title: 'Kids Class',
-    category: 'Youth',
-    src: '/kid.jpeg'
-  },
-  {
-    type: 'image',
-    title: 'Competition Victory',
+    title: 'Our Team and Victory',
     category: 'Competition',
-    src: '/group-3.jpeg'
+    src: '/c2.jpeg'
   },
+   {
+    type: 'image',
+    title: 'Won 86+ Medals in National Championship',
+    category: 'Competition',
+    src: '/c3.jpeg'
+  },
+   {
+    type: 'image',
+    title: 'Won 1st Runner up Trophy',
+    category: 'Competition',
+    src: '/c4.jpeg'
+  },
+   {
+    type: 'image',
+    title: 'Won 60+ Medals in District Championship',
+    category: 'Competition',
+    src: '/c5.jpeg'
+  },
+
+
   {
     type: 'image',
     title: 'Sensei Demonstration',
     category: 'Training',
     src: '/Sensei Demonstration.jpeg'
   },
-  {
+    {
     type: 'image',
-    title: 'Group Photo',
-    category: 'Events',
-    src: '/Group 2.jpeg'
+    title: ' Class',
+    category: 'Youth',
+    src: '/y2.jpg'
   },
-  {
+   {
     type: 'image',
-    title: 'Sparring Match',
-    category: 'Competition',
-    src: '/sparring.jpeg'
-  }
+    title: ' Class',
+    category: 'Youth',
+    src: '/y1.jpg'
+  },
+   {
+    type: 'image',
+    title: ' Class',
+    category: 'Youth',
+    src: '/y3.jpg'
+  },
+  
+ 
 ];
 
 const categories = ['All', 'Training', 'Events', 'Competition', 'Youth'];

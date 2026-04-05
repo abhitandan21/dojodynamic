@@ -12,6 +12,10 @@ import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import AddCertificate from "./pages/AddCertificate";
 
+import Blog from "./pages/Blog";
+import BlogDetail from "./pages/BlogDetail";
+import AdminBlog from "./pages/Admin";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -35,8 +39,18 @@ const App = () => (
           {/* admin */}
           <Route path="/admin" element={<Admin />} />
 
+           {/* 🔥 BLOG ROUTES */}
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/:id" element={<BlogDetail />} />
+          <Route path="/admin/blog" element={<AdminBlog />} />
+
           {/* 404 page */}
           <Route path="*" element={<NotFound />} />
+
+            
+          
+          
+
         </Routes>
       </BrowserRouter>
 

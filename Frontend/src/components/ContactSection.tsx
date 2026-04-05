@@ -101,7 +101,7 @@ export const ContactSection = () => {
     { icon: MapPin, label: 'Location', value: 'Pragati Nagar Risali Bhilai C.G ' },
     { icon: Phone, label: 'Phone', value: '7898764542' },
     { icon: Mail, label: 'Email', value: 'abhishekmartialartsandsportsac@gamil.com' },
-    { icon: Clock, label: 'Hours', value: 'Mon-Sat: 4PM-9PM' },
+    { icon: Clock, label: 'Hours', value: 'Mon-Sat: 5PM-8:30PM' },
   ];
 
   return (
@@ -297,19 +297,24 @@ export const ContactSection = () => {
 
             {/* Map placeholder */}
             <div className="aspect-video bg-card rounded-xl border border-border overflow-hidden relative">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <span className="font-display text-8xl text-primary/20">地</span>
-                  <p className="font-body text-muted-foreground mt-4">Interactive Map</p>
-                  <p className="font-body text-sm text-muted-foreground">123 Warrior Way, Martial City</p>
-                </div>
-              </div>
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3720.7851671033163!2d81.3253261!3d21.160946199999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a293dba4b524015%3A0xa0a00bcaacd498a6!2sAbhishek%20Martial%20Arts%20and%20Sports%20Academy!5e0!3m2!1sen!2sin!4v1774867353215!5m2!1sen!2sin"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full"
+              ></iframe>
             </div>
+
+
 
             {/* Social proof */}
             <div className="bg-card rounded-xl p-6 border border-border text-center">
               <p className="font-display text-4xl text-primary mb-2">4.9★</p>
-              <p className="font-body text-muted-foreground text-sm">Based on 198+ Google Reviews</p>
+              <p className="font-body text-muted-foreground text-sm">Based on 69+ Google Reviews</p>
             </div>
           </div>
         </div>

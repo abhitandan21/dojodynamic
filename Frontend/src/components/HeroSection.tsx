@@ -6,6 +6,9 @@ const images = [
   "/hero1.jpg.jpeg",
   "/hero2.jpeg",
   "/hero3.jpeg",
+  "/victory-2.jpg",
+  "/e8.jpeg",
+  "/c4.jpeg",
 ];
 
 export const HeroSection = () => {

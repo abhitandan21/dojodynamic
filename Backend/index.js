@@ -1,19 +1,35 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
+
 
 // routes import
 import authRoutes from "./routes/authRoutes.js";
 import certificateRoutes from "./routes/certificateRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import formRoutes from "./routes/formRoutes.js";
+import blogRoutes from "./routes/blogRoutes.js";
+
 
 dotenv.config();
-
 const app = express();
 
+app.use("/api/blogs", blogRoutes);
+
+
+
 // middleware
+app.use(cors());
 app.use(express.json());
+
+//  routes 
+app.use("/api/blogs", blogRoutes);
+// routes
+app.use("/api/auth", authRoutes);
+app.use("/api/certificates", certificateRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/form", formRoutes);
 
 // env variables
 const PORT = process.env.PORT || 4000;
@@ -32,11 +48,7 @@ const connectDB = async () => {
 
 connectDB();
 
-// routes
-app.use("/api/auth", authRoutes);
-app.use("/api/certificates", certificateRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/form", formRoutes);
+
 
 // test route
 app.get("/", (req, res) => {

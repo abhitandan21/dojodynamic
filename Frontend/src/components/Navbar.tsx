@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
+import { Link } from "react-router-dom";
 
 const navLinks = [
   { href: '#about', label: 'About' },
@@ -10,6 +11,8 @@ const navLinks = [
   { href: '#gallery', label: 'Gallery' },
   { href: '#testimonials', label: 'Testimonials' },
   { href: '#contact', label: 'Contact' },
+  { href: '/blog', label: 'Blog' },
+
 ];
 
 export const Navbar = () => {

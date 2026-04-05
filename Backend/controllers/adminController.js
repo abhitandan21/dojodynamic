@@ -1,4 +1,4 @@
-import Certificate from "../models/Certificate.js";
+import Certificate from "../model/Certificate.js";
 
 export const getAllCertificates = async (req, res) => {
   const data = await Certificate.find().populate("userId");
