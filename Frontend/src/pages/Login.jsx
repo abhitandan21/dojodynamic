@@ -3,7 +3,7 @@ import { ChevronLeft, Eye, EyeOff, Lock, Phone } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 
-const BASE_URL = "http://localhost:4000/api";
+const BASE_URL = "http://localhost:4001/api";
 
 export default function Login() {
   const [mobile, setMobile] = useState("");

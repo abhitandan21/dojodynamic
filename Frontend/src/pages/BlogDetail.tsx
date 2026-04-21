@@ -6,15 +6,15 @@ export default function BlogDetail() {
   const [blog, setBlog] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/blogs/${id}`)
+    fetch(`http://localhost:4001/api/blogs/${id}`)
       .then(res => res.json())
       .then(data => setBlog(data));
-  }, []);
+  }, [id]);
 
   if (!blog) return <p>Loading...</p>;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
+    <div className="p-10 max-w-3xl mx-auto">
 
       <img src={blog.image} className="w-full h-64 object-cover mb-4" />
 
@@ -22,7 +22,9 @@ export default function BlogDetail() {
 
       <p className="text-gray-500 mb-4">{blog.description}</p>
 
-      <p>{blog.content}</p>
+      <p style={{ whiteSpace: "pre-line" }}>
+  {blog.content}
+</p>
 
     </div>
   );

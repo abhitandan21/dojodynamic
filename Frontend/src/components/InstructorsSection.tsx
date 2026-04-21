@@ -7,7 +7,7 @@ const instructors = [
     title: 'Secretary CGKDA • 6th Dan',
     bio: 'With over 40 years of dedicated practice.',
     specialties: ['Youth Training', 'Competition Prep', 'Self-Defense'],
-    achievements: ['Director Pskai India', 'Youth Coach of the Year 2019'],
+    achievements: ['Director PSKAI India', 'Chief Exaniminer and Technical Director of PSKAI'],
     image: '/amol.jpeg',
   },
 
@@ -16,12 +16,19 @@ const instructors = [
   {
     name: 'SENSAI ABHISHEK KUMAR TANDAN',
     title: 'Chief Instructor • 3RD Dan',
-    bio: 'With over 10 years of dedicated practice, Sensei Abhishek trained in Bhilai.',
+    bio: 'With over 9 years of dedicated practice, Sensei Abhishek trained in Bhilai.',
     specialties: ['Traditional Kata', 'Kumite Strategy', 'Philosophy'],
-    achievements: ['International Champion 2023', 'Certified Master Instructor'],
+    achievements: ['International Champion 2023', 'Certified Instructor, KIO Judge Kata & Kumite, Founder and Director AMAASA '],
     image: '/coach.jpeg',
   },
  
+
+
+
+
+
+
+  
   {
     name: 'MR. GHANSHAYAM DEWANGAN ',
     title: 'Petron of Amaasa ',

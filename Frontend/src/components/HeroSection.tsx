@@ -1,6 +1,7 @@
 import { ChevronDown } from 'lucide-react';
 import { Button } from './ui/button';
 import { useState, useEffect } from 'react';
+import { FaWhatsapp, FaInstagram, FaYoutube } from "react-icons/fa";
 
 const images = [
   "/hero1.jpg.jpeg",
@@ -41,6 +42,41 @@ export const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
 
+      {/* ✅ Social Icons (LEFT SIDE CENTER) */}
+      <div className="absolute left-5 top-1/2 -translate-y-1/2 z-20 flex flex-col gap-4 text-2xl">
+
+        {/* WhatsApp */}
+        <a
+          href="https://wa.me/917898764542"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white hover:text-green-400 transition"
+        >
+          <FaWhatsapp />
+        </a>
+
+        {/* Instagram */}
+        <a
+          href="https://www.instagram.com/abhishekmartialartsacademy26?utm_source=qr&igsh=eGx0cjd3N2pxNjAw"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white hover:text-pink-500 transition"
+        >
+          <FaInstagram />
+        </a>
+
+        {/* YouTube */}
+        <a
+          href="https://www.youtube.com/@AbhishekMartialArtsandSportsAc"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white hover:text-red-500 transition"
+        >
+          <FaYoutube />
+        </a>
+
+      </div>
+
       {/* 🔥 Background Slider */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-all duration-700"
@@ -52,7 +88,7 @@ export const HeroSection = () => {
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/70" />
 
-      {/* Decorative elements (same as before) */}
+      {/* Decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-1/4 -left-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-secondary/10 rounded-full blur-3xl" />
@@ -65,7 +101,7 @@ export const HeroSection = () => {
         </span>
       </div>
 
-      {/* CONTENT (UNCHANGED) */}
+      {/* CONTENT */}
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center">
 
@@ -97,7 +133,7 @@ export const HeroSection = () => {
           {/* Stats */}
           <div className="grid grid-cols-3 gap-8 mt-16 pt-16 border-t border-white/20 animate-fade-up">
             <div>
-              <span className="text-4xl text-red-500">05+</span>
+              <span className="text-4xl text-red-500">09+</span>
               <p className="text-sm text-gray-400 mt-2">Years Experience</p>
             </div>
             <div>

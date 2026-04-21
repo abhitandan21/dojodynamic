@@ -65,28 +65,53 @@ export const ContactSection = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    if (!validateForm()) {
-      toast.error('Please fix the errors in the form');
-      return;
-    }
+  if (!validateForm()) {
+    toast.error('Please fix the errors in the form');
+    return;
+  }
 
+  try {
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const response = await fetch("http://localhost:4001/api/enquiries", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-    setIsSubmitting(false);
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to submit enquiry");
+    }
+
+    // ✅ Success
     setIsSubmitted(true);
-    toast.success('Thank you! We\'ll be in touch soon.');
+    toast.success("Thank you! We'll be in touch soon.");
 
-    // Reset form after delay
+    // Reset form
     setTimeout(() => {
       setIsSubmitted(false);
-      setFormData({ name: '', email: '', phone: '', program: '', message: '' });
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        program: '',
+        message: '',
+      });
     }, 3000);
-  };
+
+  } catch (error: any) {
+    console.error(error);
+    toast.error(error.message || "Something went wrong");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
