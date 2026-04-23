@@ -10,9 +10,12 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
     setIsLoading(true);
+    setError("");
+
     try {
       const res = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
@@ -25,14 +28,16 @@ export default function Login() {
       if (res.ok) {
         localStorage.setItem("user", JSON.stringify(data));
 
-        if (data.role === "admin") {
-          window.location.href = "/admin";
+        if (data.user?.role === "admin") {
+          window.location.href = "/admin/dashboard";
         } else {
           window.location.href = "/dashboard";
         }
       } else {
-        alert(data.msg);
+        setError(data.msg || data.message || "Login failed");
       }
+    } catch (err) {
+      setError("Server se connect nahi ho paaya");
     } finally {
       setIsLoading(false);
     }
@@ -45,101 +50,94 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-black via-gray-900/90 to-black relative overflow-hidden">
-      {/* Background decorative elements */}
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-black via-zinc-950 to-black relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-32 sm:-left-40 md:-left-48 w-64 sm:w-[500px] h-64 sm:h-[500px] bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 -right-32 sm:-right-40 md:-right-48 w-56 sm:w-[400px] h-56 sm:h-[400px] bg-red-500/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] sm:w-[800px] h-[600px] sm:h-[800px] bg-gradient-radial from-primary/10 to-transparent rounded-full blur-3xl" />
+        <div className="absolute top-1/4 -left-40 w-[420px] h-[420px] bg-red-600/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 -right-40 w-[420px] h-[420px] bg-yellow-500/10 rounded-full blur-3xl" />
       </div>
 
-      {/* Japanese character - responsive */}
-      <div className="absolute right-4 sm:right-8 lg:right-10 top-20 sm:top-1/4 -translate-y-1/2 hidden xl:block">
-        <span className="font-display text-[8rem] xl:text-[15rem] text-white/3 select-none">武</span>
-      </div>
-
-      <div className="w-full max-w-md sm:max-w-lg space-y-6 sm:space-y-8 relative z-10">
-        {/* Back button - responsive */}
+      <div className="w-full max-w-md sm:max-w-lg relative z-10">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-all duration-300 group text-sm sm:text-base py-2 px-3 -mt-12 sm:-mt-16"
+          className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-all duration-300 group text-sm sm:text-base py-2 px-1 mb-4"
         >
           <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
-          <span className="font-body uppercase tracking-wider">Back to Home</span>
+          <span>Back to Home</span>
         </Link>
 
-        {/* Main card - perfect responsive padding */}
-        <div className="bg-white/5 sm:bg-card/90 backdrop-blur-xl border border-white/10 sm:border-white/20 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl">
-          {/* Header - responsive */}
-          <div className="text-center mb-8 sm:mb-10">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-primary/20 rounded-xl sm:rounded-2xl flex items-center justify-center mx-auto mb-6 sm:mb-8 shadow-crimson p-4 sm:p-6">
-              <Lock className="w-8 h-8 sm:w-12 sm:h-12 text-primary" />
+        <div className="bg-zinc-900/95 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 bg-red-600/15 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+              <Lock className="w-9 h-9 sm:w-11 sm:h-11 text-red-500" />
             </div>
-            <h1 className="font-display text-3xl sm:text-4xl md:text-5xl bg-gradient-to-r from-white via-gray-100 to-gray-200 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
+
+            <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
               Welcome Back
             </h1>
-            <p className="text-base sm:text-lg text-gray-400 max-w-sm mx-auto leading-relaxed px-4 sm:px-0">
-              Sign in to continue your martial arts journey with discipline and strength
+
+            <p className="text-sm sm:text-base text-gray-300 leading-relaxed">
+              Sign in to continue to your martial arts dashboard
             </p>
           </div>
 
-          {/* Form - perfect spacing */}
-          <div className="space-y-5 sm:space-y-6">
-            {/* Mobile Input */}
-            <div className="space-y-2 sm:space-y-3">
-              <label className="font-body text-xs sm:text-sm uppercase tracking-wider text-gray-400 block">
+          {error && (
+            <div className="mb-5 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-5">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white block">
                 Mobile Number
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 sm:w-5 sm:h-5" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5" />
                 <input
                   type="tel"
                   placeholder="Enter mobile number"
                   value={mobile}
                   onChange={(e) => setMobile(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-4 py-3 bg-white/5 sm:bg-white/10 border border-white/20 rounded-xl sm:rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 text-base sm:text-lg"
+                  className="w-full h-14 pl-12 pr-4 bg-white text-black placeholder:text-gray-500 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-500 text-base"
                 />
               </div>
             </div>
 
-            {/* Password Input */}
-            <div className="space-y-2 sm:space-y-3">
-              <label className="font-body text-xs sm:text-sm uppercase tracking-wider text-gray-400 block">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-white block">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4 sm:w-5 sm:h-5" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 w-5 h-5" />
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   onKeyDown={handleKeyPress}
-                  className="w-full h-12 sm:h-14 pl-10 sm:pl-12 pr-10 sm:pr-12 py-3 bg-white/5 sm:bg-white/10 border border-white/20 rounded-xl sm:rounded-2xl text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 focus:ring-2 focus:ring-primary/20 transition-all duration-300 text-base sm:text-lg"
+                  className="w-full h-14 pl-12 pr-12 bg-white text-black placeholder:text-gray-500 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-red-500 text-base"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors p-1 hover:scale-110"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black transition-colors"
                 >
-                  {showPassword ? <EyeOff size={16} className="sm:w-5 sm:h-5" /> : <Eye size={16} className="sm:w-5 sm:h-5" />}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
 
-            {/* Login Button - perfect responsive height */}
             <Button
               onClick={handleLogin}
               disabled={isLoading || !mobile || !password}
               size="lg"
-              className="w-full h-12 sm:h-14 text-sm sm:text-lg font-display tracking-wider uppercase rounded-xl sm:rounded-2xl bg-gradient-to-r from-primary to-red-600 hover:from-primary/90 hover:to-red-500 shadow-crimson hover:shadow-crimson/50 transition-all duration-300 font-semibold"
+              className="w-full h-14 text-base font-semibold rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white"
             >
               {isLoading ? (
                 <span className="flex items-center gap-2">
-                  <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span className="sm:inline hidden">Signing In...</span>
-                  <span className="sm:hidden">Signing...</span>
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Signing In...
                 </span>
               ) : (
                 "Sign In"
@@ -147,46 +145,47 @@ export default function Login() {
             </Button>
           </div>
 
-          {/* Divider - responsive */}
-          <div className="relative flex items-center py-4 sm:py-6 my-6 sm:my-8">
+          <div className="relative flex items-center py-5 my-6">
             <div className="flex-grow border-t border-white/10" />
-            <span className="flex-shrink-0 mx-3 sm:mx-4 text-xs sm:text-sm text-gray-500 uppercase tracking-wider font-medium px-3 py-1 bg-white/5 rounded-full">
+            <span className="mx-4 text-xs text-gray-400 uppercase tracking-wider px-3 py-1 bg-zinc-800 rounded-full">
               or
             </span>
             <div className="flex-grow border-t border-white/10" />
           </div>
 
-          {/* Footer links - responsive */}
-          <div className="text-center space-y-3 pt-4 sm:pt-6">
-            <p className="text-xs sm:text-sm text-gray-500">
+          <div className="text-center space-y-3">
+            <p className="text-sm text-gray-300">
               Don't have an account?{" "}
               <Link
                 to="/register"
-                className="text-primary hover:text-primary/80 font-medium transition-colors underline decoration-1 underline-offset-2"
+                className="text-red-400 hover:text-red-300 font-medium underline underline-offset-2"
               >
                 Create one now
               </Link>
             </p>
-            <p className="text-xs text-gray-600">
-              <Link to="/forgot-password" className="text-primary hover:underline hover:underline-offset-2 transition-all">
+
+            <p className="text-xs text-gray-400">
+              <Link
+                to="/forgot-password"
+                className="text-red-400 hover:underline underline-offset-2"
+              >
                 Forgot password? Reset here
               </Link>
             </p>
           </div>
 
-          {/* Stats - responsive grid */}
-          <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-8 sm:pt-12 border-t border-white/10 mt-8">
+          <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10 mt-8">
             <div className="text-center">
-              <span className="text-xl sm:text-2xl text-red-500 block font-bold">2000+</span>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-tight">Students Trained</p>
+              <span className="text-2xl text-red-500 block font-bold">2000+</span>
+              <p className="text-xs text-gray-400 mt-1">Students Trained</p>
             </div>
             <div className="text-center">
-              <span className="text-xl sm:text-2xl text-yellow-400 block font-bold">05+</span>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-tight">Years Experience</p>
+              <span className="text-2xl text-yellow-400 block font-bold">05+</span>
+              <p className="text-xs text-gray-400 mt-1">Years Experience</p>
             </div>
             <div className="text-center">
-              <span className="text-xl sm:text-2xl text-primary block font-bold">110+</span>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1 leading-tight">Championships</p>
+              <span className="text-2xl text-red-400 block font-bold">110+</span>
+              <p className="text-xs text-gray-400 mt-1">Championships</p>
             </div>
           </div>
         </div>

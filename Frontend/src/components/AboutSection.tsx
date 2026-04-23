@@ -54,16 +54,16 @@ export const AboutSection = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80" />
               <div className="absolute inset-0 flex items-center justify-center">
                 {/*<span className="font-display text-[15rem] text-primary/10 select-none">道</span>*/}
-              <img src="../public/Victory-1.jpeg" alt="Banner" />
+              <img src="../public/c2.jpeg" alt="Banner" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-8">
-                <blockquote className="font-body text-lg italic text-foreground/90">
+                {/*<blockquote className="font-body text-lg italic text-foreground/90">
                   "The ultimate aim of karate lies not in victory or defeat, but in the perfection of 
                   the character of its participants."
                 </blockquote>
                 <cite className="font-body text-sm text-muted-foreground mt-4 block">
                   — Director of AMAASA
-                </cite>
+                </cite>*/}
               </div>
             </div>
             {/* Decorative elements */}

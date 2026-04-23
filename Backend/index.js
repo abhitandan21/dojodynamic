@@ -53,6 +53,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/belts", beltRoutes);
 app.use("/api/competitions", competitionRoutes);
 app.use("/api/achievements", achievementRoutes);
+app.use("/api/admin", adminRoutes);
 
 
 // routes

@@ -19,6 +19,15 @@ const beltSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    reviewRemark: {
+      type: String,
+      default: "",
+    },
   },
   { timestamps: true }
 );

@@ -11,7 +11,7 @@ export default function Blog() {
   }, []);
 
   return (
-    <div className="grid md:grid-cols-2 gap-6 p-6">
+    <div className="grid md:grid-cols-2 gap-20 p-20">
 
       {blogs.map((blog: any) => (
         <Link to={`/blog/${blog._id}`} key={blog._id}>

@@ -6,7 +6,7 @@ const HelpDesk = () => {
       <h2 className="text-xl font-bold">Help Desk</h2>
       <EnquiryForm/>
 
-      <p className="my-3">📞 9876543210</p>
+      <p className="my-3">📞 7898764542</p>
 
       {/* existing form yaha reuse karo */}
     </div>

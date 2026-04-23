@@ -51,51 +51,51 @@ const Dashboard = () => {
   const [selectedCourse, setSelectedCourse] = useState("");
 
   const courses = [
-  {
-    title: "Personality Development",
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    title: "White Belt",
-    video: "https://www.w3schools.com/html/movie.mp4",
-  },
-  {
-    title: "Yellow Belt",
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    title: "Orange Belt",
-    video: "https://www.w3schools.com/html/movie.mp4",
-  },
-  {
-    title: "Green Belt",
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    title: "Blue Belt",
-    video: "https://www.w3schools.com/html/movie.mp4",
-  },
-  {
-    title: "Purple Belt",
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    title: "Brown II",
-    video: "https://www.w3schools.com/html/movie.mp4",
-  },
-  {
-    title: "Brown I",
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-  {
-    title: "Plain Brown",
-    video: "https://www.w3schools.com/html/movie.mp4",
-  },
-  {
-    title: "Black Belt",
-    video: "https://www.w3schools.com/html/mov_bbb.mp4",
-  },
-];
+    {
+      title: "Personality Development",
+      video: "https://www.youtube.com/embed/WQId4YdlxTQ",
+    },
+    {
+      title: "White Belt",
+      video: "https://www.youtube.com/embed/pcbB5Ybmplg?si=facc4P_0TAXIQvTh",
+    },
+    {
+      title: "Yellow Belt",
+      video: "https://www.w3schools.com/html/mov_bbb.mp4",
+    },
+    {
+      title: "Orange Belt",
+      video: "https://www.w3schools.com/html/movie.mp4",
+    },
+    {
+      title: "Green Belt",
+      video: "https://www.w3schools.com/html/mov_bbb.mp4",
+    },
+    {
+      title: "Blue Belt",
+      video: "https://www.w3schools.com/html/movie.mp4",
+    },
+    {
+      title: "Purple Belt",
+      video: "https://www.w3schools.com/html/mov_bbb.mp4",
+    },
+    {
+      title: "Brown II",
+      video: "https://www.w3schools.com/html/movie.mp4",
+    },
+    {
+      title: "Brown I",
+      video: "https://www.w3schools.com/html/mov_bbb.mp4",
+    },
+    {
+      title: "Plain Brown",
+      video: "https://www.w3schools.com/html/movie.mp4",
+    },
+    {
+      title: "Black Belt",
+      video: "https://www.w3schools.com/html/mov_bbb.mp4",
+    },
+  ];
 
 
 
@@ -113,20 +113,20 @@ const Dashboard = () => {
     }
   }, []);
 
- const fetchStudentData = async (studentId: string) => {
-  try {
-    const beltRes = await fetch(`${API_URL}/belts/${studentId}`);
-    const achievementRes = await fetch(`${API_URL}/achievements/student/${studentId}`);
+  const fetchStudentData = async (studentId: string) => {
+    try {
+      const beltRes = await fetch(`${API_URL}/belts/${studentId}`);
+      const achievementRes = await fetch(`${API_URL}/achievements/student/${studentId}`);
 
-    const belts = await beltRes.json();
-    const achievements = await achievementRes.json();
+      const belts = await beltRes.json();
+      const achievements = await achievementRes.json();
 
-    setBeltData(belts);
-    setCompData(achievements);
-  } catch (error) {
-    console.log("Data load error:", error);
-  }
-};
+      setBeltData(belts);
+      setCompData(achievements);
+    } catch (error) {
+      console.log("Data load error:", error);
+    }
+  };
 
 
 
@@ -184,10 +184,10 @@ const Dashboard = () => {
       formData.append("certNo", beltForm.certNo);
       formData.append("file", beltForm.file);
 
-   const res = await fetch(`${API_URL}/belts`, {
-  method: "POST",
-  body: formData,
-});
+      const res = await fetch(`${API_URL}/belts`, {
+        method: "POST",
+        body: formData,
+      });
 
 
       const savedBelt = await res.json();
@@ -243,10 +243,10 @@ const Dashboard = () => {
       formData.append("file", compForm.file);
 
 
-const res = await fetch(`${API_URL}/achievements/competition`, {
-  method: "POST",
-  body: formData,
-});
+      const res = await fetch(`${API_URL}/achievements/competition`, {
+        method: "POST",
+        body: formData,
+      });
 
 
       const savedCompetition = await res.json();
@@ -292,8 +292,7 @@ const res = await fetch(`${API_URL}/achievements/competition`, {
     compData.forEach((comp, index) => {
       doc.setFontSize(11);
       doc.text(
-        `${index + 1}. ${comp.name} | Kata: ${comp.kata || "N/A"} | Kumite: ${
-          comp.kumite || "N/A"
+        `${index + 1}. ${comp.name} | Kata: ${comp.kata || "N/A"} | Kumite: ${comp.kumite || "N/A"
         }`,
         20,
         y
@@ -401,9 +400,11 @@ const res = await fetch(`${API_URL}/achievements/competition`, {
                     <th>S.No</th>
                     <th>Belt Name</th>
                     <th>Cert No</th>
+                    <th>Status</th>
                     <th>View</th>
                   </tr>
                 </thead>
+
 
                 <tbody>
                   {beltData.map((b, i) => (
@@ -411,11 +412,13 @@ const res = await fetch(`${API_URL}/achievements/competition`, {
                       <td>{i + 1}</td>
                       <td>{b.beltName}</td>
                       <td>{b.certNo}</td>
+                      <td>{b.status || "pending"}</td>
                       <td>
                         {b.fileUrl && (
                           <a
                             href={`http://localhost:4001${b.fileUrl}`}
                             target="_blank"
+                            rel="noreferrer"
                             className="bg-blue-500 text-white px-3 py-1 rounded"
                           >
                             View
@@ -425,6 +428,7 @@ const res = await fetch(`${API_URL}/achievements/competition`, {
                     </tr>
                   ))}
                 </tbody>
+
               </table>
             </div>
           )}
@@ -485,7 +489,6 @@ const res = await fetch(`${API_URL}/achievements/competition`, {
                   Add
                 </button>
               </div>
-
               <table className="w-full border text-black">
                 <thead className="bg-gray-200">
                   <tr>
@@ -493,38 +496,42 @@ const res = await fetch(`${API_URL}/achievements/competition`, {
                     <th>Name</th>
                     <th>Kata</th>
                     <th>Kumite</th>
+                    <th>Status</th>
                     <th>View</th>
                   </tr>
                 </thead>
 
+
                 <tbody>
-  {compData.map((c, i) => (
-    <tr key={i} className="text-center border-t">
-      <td>{i + 1}</td>
-      <td>{c.title || c.name || "N/A"}</td>
-      <td>{c.kata || "N/A"}</td>
-      <td>{c.kumite || "N/A"}</td>
-      <td>
-        {c.fileUrl && (
-          <a
-            href={`http://localhost:4001${c.fileUrl}`}
-            target="_blank"
-            rel="noreferrer"
-            className="bg-green-500 text-white px-3 py-1 rounded"
-          >
-            View
-          </a>
-        )}
-      </td>
-    </tr>
-  ))}
-</tbody>
+                  {compData.map((c, i) => (
+                    <tr key={i} className="text-center border-t">
+                      <td>{i + 1}</td>
+                      <td>{c.title || c.name || "N/A"}</td>
+                      <td>{c.kata || "N/A"}</td>
+                      <td>{c.kumite || "N/A"}</td>
+                      <td>{c.status || "pending"}</td>
+                      <td>
+                        {c.fileUrl && (
+                          <a
+                            href={`http://localhost:4001${c.fileUrl}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="bg-green-500 text-white px-3 py-1 rounded"
+                          >
+                            View
+                          </a>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+
 
               </table>
             </div>
           )}
 
-         {tab === "courses" && (
+          {tab === "courses" && (
   <div>
     <h2 className="text-xl font-bold mb-4">Courses</h2>
 
@@ -540,15 +547,25 @@ const res = await fetch(`${API_URL}/achievements/competition`, {
         </button>
       ))}
     </div>
-
-    {selectedCourse ? (
-      <video key={selectedCourse} controls className="w-full rounded-lg border">
-        <source src={selectedCourse} type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    ) : (
-      <p className="text-gray-600">Course select karein.</p>
-    )}
+{selectedCourse ? (
+  selectedCourse.includes("youtube.com") ? (
+    <iframe
+      width="100%"
+      height="400"
+      src={selectedCourse}
+      title="Course Video"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowFullScreen
+      className="rounded-lg border"
+    ></iframe>
+  ) : (
+    <video width="100%" controls className="rounded-lg border">
+      <source src={selectedCourse} type="video/mp4" />
+    </video>
+  )
+) : (
+  <p>Course select karein.</p>
+)}
   </div>
 )}
 

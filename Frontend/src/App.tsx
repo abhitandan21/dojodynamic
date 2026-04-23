@@ -14,6 +14,10 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import AddCertificate from "./pages/AddCertificate";
+import AdminStudents from "./pages/AdminStudents";
+import AdminStudentDetails from "./pages/AdminStudentDetails";
+import AdminDashboard from "./pages/AdminDashboard";
+
 
 import Blog from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
@@ -62,6 +66,11 @@ const App = () => (
 
           {/* admin */}
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/students" element={<AdminStudents />} />
+          <Route path="/admin/students/:studentId" element={<AdminStudentDetails />} />
+          <Route path="/admin/students/:studentId" element={<AdminStudentDetails />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
 
           {/* 🔥 BLOG ROUTES */}
           <Route path="/blog" element={<Blog />} />
