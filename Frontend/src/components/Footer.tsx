@@ -2,10 +2,10 @@ import { Facebook, Instagram, Youtube, Twitter } from 'lucide-react';
 
 const footerLinks = {
   programs: [
-    { label: 'Little Dragons', href: '#classes' },
-    { label: 'Junior Karate', href: '#classes' },
-    { label: 'Adult Karate', href: '#classes' },
-    { label: 'Competition Team', href: '#classes' },
+    { label: 'Karate', href: '#classes' },
+    { label: 'Lathi Training', href: '#classes' },
+    { label: 'Nunchaku Training', href: '#classes' },
+    { label: 'Personality Development & Fitness', href: '#classes' },
     { label: 'Self-Defense', href: '#classes' },
   ],
   about: [

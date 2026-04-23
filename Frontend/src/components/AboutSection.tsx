@@ -40,8 +40,8 @@ export const AboutSection = () => {
           </h2>
           <div className="w-20 h-1 bg-primary mx-auto mb-8" />
           <p className="font-body text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Founded in 2021, AMAASA has been a sanctuary for martial artists seeking authentic 
-            Karate training. Our lineage traces directly to PASKAI INDIA, KIO, WKF, where our founding 
+            Founded in 2021, AMAASA has been a sanctuary for martial artists seeking authentic
+            Karate training. Our lineage traces directly to PASKAI INDIA, KIO, WKF, where our founding
             sensei trained under legendary masters for over two decades.
           </p>
         </div>
@@ -54,7 +54,7 @@ export const AboutSection = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80" />
               <div className="absolute inset-0 flex items-center justify-center">
                 {/*<span className="font-display text-[15rem] text-primary/10 select-none">道</span>*/}
-              <img src="../public/c2.jpeg" alt="Banner" />
+                <img src="../public/c2.jpeg" alt="Banner" />
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-8">
                 {/*<blockquote className="font-body text-lg italic text-foreground/90">
@@ -77,28 +77,45 @@ export const AboutSection = () => {
               MORE THAN A MARTIAL ART
             </h3>
             <p className="font-body text-muted-foreground leading-relaxed mb-6">
-              At AMAASA Dojo, we believe karate is a path to self-discovery. Our training goes beyond 
-              physical techniques—we nurture mental strength, emotional resilience, and spiritual growth 
+              At AMAASA Dojo, we believe karate is a path to self-discovery. Our training goes beyond
+              physical techniques—we nurture mental strength, emotional resilience, and spiritual growth
               in every student who walks through our doors.
             </p>
             <p className="font-body text-muted-foreground leading-relaxed mb-8">
-              Whether you're a complete beginner or an experienced martial artist, our comprehensive 
-              curriculum adapts to your skill level while challenging you to reach new heights. From 
+              Whether you're a complete beginner or an experienced martial artist, our comprehensive
+              curriculum adapts to your skill level while challenging you to reach new heights. From
               traditional kata to practical self-defense, we provide a complete martial arts education.
             </p>
 
-            {/* Stats */}
+            {/* Certificates */}
             <div className="grid grid-cols-2 gap-6">
-              <div className="bg-card p-6 rounded-lg border border-border">
-                <span className="font-display text-4xl text-primary">3</span>
-                <p className="font-body text-sm text-muted-foreground mt-1">Training Locations</p>
+
+              <div className="bg-card p-6 rounded-lg border border-border text-center">
+                <img
+                  src="../public/aff1.jpeg"
+                  alt="Affiliation Certificate"
+                  className="w-full h-40 object-cover rounded-md mb-4"
+                />
+                <p className="font-body text-sm text-muted-foreground">
+                  Affiliation Certificate
+                </p>
               </div>
-              <div className="bg-card p-6 rounded-lg border border-border">
-                <span className="font-display text-4xl text-secondary">8</span>
-                <p className="font-body text-sm text-muted-foreground mt-1">Master Instructors</p>
-              </div>
+
+              {/*<div className="bg-card p-6 rounded-lg border border-border text-center">
+                <img
+                  src="../public/aff1.jpeg"
+                  alt="MSME Certificate"
+                  className="w-full h-40 object-cover rounded-md mb-4"
+                />
+                <p className="font-body text-sm text-muted-foreground">
+                  MSME Certificate
+                </p>
+              </div>*/}
+
             </div>
           </div>
+          
+
         </div>
 
         {/* Values grid */}

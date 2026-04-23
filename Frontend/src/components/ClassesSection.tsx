@@ -2,38 +2,64 @@ import { Baby, Users, Shield, Award, ArrowRight } from 'lucide-react';
 import { Button } from './ui/button';
 
 const classes = [
-  {
-    icon: Baby,
-    title: 'Little Dragons',
-    age: 'Ages 4-7',
-    description: 'Fun, engaging classes that introduce young children to martial arts fundamentals while developing coordination, focus, and social skills.',
-    features: ['Motor skill development', 'Basic self-defense', 'Confidence building', 'Fun games & activities'],
-    color: 'primary',
-  },
-  {
-    icon: Users,
-    title: 'Junior Karate',
-    age: 'Ages 8-14',
-    description: 'Comprehensive training that builds character, discipline, and physical fitness through traditional karate techniques and modern teaching methods.',
-    features: ['Traditional kata', 'Sparring introduction', 'Belt progression', 'Anti-bullying skills'],
-    color: 'secondary',
-  },
-  {
-    icon: Shield,
-    title: 'Adult Karate',
-    age: 'Ages 15+',
-    description: 'Whether beginner or advanced, develop your skills in a supportive environment that challenges both body and mind.',
-    features: ['Full curriculum', 'Fitness conditioning', 'Stress relief', 'Competition optional'],
-    color: 'primary',
-  },
-  {
-    icon: Award,
-    title: 'Competition Team',
-    age: 'By Invitation',
-    description: 'Elite training program for dedicated practitioners who wish to compete at regional, national, and international tournaments.',
-    features: ['Advanced techniques', 'Tournament strategy', 'Mental preparation', 'Travel opportunities'],
-    color: 'secondary',
-  },
+ {
+  icon: Users,
+  title: 'Karate',
+  age: 'Ages 4+ (Kids to Adults)',
+  description: 'Complete karate training program for children, juniors, and adults. Build discipline, confidence, fitness, focus, and self-defense skills in a supportive environment.',
+  features: [
+    'Kids beginner classes',
+    'Traditional kata',
+    'Sparring practice',
+    'Belt progression',
+    'Fitness & self-defense',
+    'Confidence building'
+  ],
+  color: 'primary',
+},
+ {
+  icon: Shield,
+  title: 'Lathi Training',
+  age: 'Ages 10+',
+  description: 'Learn traditional lathi techniques for self-defense, coordination, strength, and discipline through structured training.',
+  features: [
+    'Weapon handling basics',
+    'Defense techniques',
+    'Strength & balance',
+    'Traditional drills'
+  ],
+  color: 'primary',
+},
+
+{
+  icon: Shield,
+  title: 'Nunchaku Training',
+  age: 'Ages 6+',
+  description: 'Master safe and effective nunchaku techniques while improving speed, control, coordination, and focus.',
+  features: [
+    'Basic spins & control',
+    'Coordination training',
+    'Advanced techniques',
+    'Focus & discipline'
+  ],
+  color: 'primary',
+},
+
+ {
+  icon: Users,
+  title:'Personality Development & Fitness',
+  age: 'Ages 4+ (Kids to Adults)',
+  description: 'Complete program focused on building confidence, communication skills, leadership qualities, physical fitness, and a healthy lifestyle.',
+  features: [
+    'Confidence building',
+    'Communication skills',
+    'Leadership training',
+    'Strength & stamina',
+    'Weight loss support',
+    'Positive mindset'
+  ],
+  color: 'primary',
+},
 ];
 
 const beltLevels = [
@@ -43,7 +69,11 @@ const beltLevels = [
   { belt: 'Green', meaning: 'Developing skill', color: 'bg-green-600' },
   { belt: 'Blue', meaning: 'Deepening knowledge', color: 'bg-blue-600' },
   { belt: 'Purple', meaning: 'Wisdom emerging', color: 'bg-purple-600' },
-  { belt: 'Brown', meaning: 'Maturity', color: 'bg-amber-800' },
+   { belt: 'Brown 3', meaning: 'Advanced foundation', color: 'bg-amber-700' },
+  { belt: 'Brown 2', meaning: 'Growing mastery', color: 'bg-amber-800' },
+  { belt: 'Brown 1', meaning: 'Near black belt level', color: 'bg-yellow-900' },
+   
+
   { belt: 'Black', meaning: 'Mastery begins', color: 'bg-black border border-border' },
 ];
 

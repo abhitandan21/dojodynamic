@@ -7,7 +7,7 @@ const instructors = [
     title: 'Secretary CGKDA • 6th Dan',
     bio: 'With over 40 years of dedicated practice.',
     specialties: ['Youth Training', 'Competition Prep', 'Self-Defense'],
-    achievements: ['Director PSKAI India', 'Chief Exaniminer and Technical Director of PSKAI'],
+    achievements: ['Director PSKAI India', 'Chief Exaniminer and Technical Director of PSKAI','Asian Referee', 'Secretary CGKDA'],
     image: '/amol.jpeg',
   },
 
@@ -18,32 +18,29 @@ const instructors = [
     title: 'Chief Instructor • 3RD Dan',
     bio: 'With over 9 years of dedicated practice, Sensei Abhishek trained in Bhilai.',
     specialties: ['Traditional Kata', 'Kumite Strategy', 'Philosophy'],
-    achievements: ['International Champion 2023', 'Certified Instructor, KIO Judge Kata & Kumite, Founder and Director AMAASA '],
+   // achievements: ['International Champion 2023', 'Certified Instructor, KIO Judge Kata & Kumite, Founder and Director AMAASA '],
+    achievements: [
+  'International Champion',
+  'Certified Instructor & Judge Kata & Kumite, KIO',
+  'Founder and Director AMAASA',
+  'Shahid Rajeev Gandhi Sport Appreciation Awardee',
+  'DR.Ambedkar Fellowship National Awardee 2025 ',
+  'All India Inter University JUDO Player',
+  'National Athelte, Running',
+  'Self Defense Expert'
+],
     image: '/coach.jpeg',
   },
  
 
 
-
-
-
-
-  
-  {
-    name: 'MR. GHANSHAYAM DEWANGAN ',
-    title: 'Petron of Amaasa ',
-    bio: 'Social Worker ',
-    specialties: ['Social Worker', 'Speaker ', ''],
-    achievements: ['Sport Player', ''],
-    image: '/petron.jpeg',
-  },
 ];
 
 export const InstructorsSection = () => {
   return (
     <section id="instructors" className="py-24 bg-background relative overflow-hidden">
       <div className="container mx-auto px-4">
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid lg:grid-cols-2 gap-8">
           {instructors.map((instructor) => (
             <div
               key={instructor.name}
@@ -51,7 +48,7 @@ export const InstructorsSection = () => {
             >
 
               {/* ✅ IMAGE ADDED */}
-              <div className="h-64 overflow-hidden">
+              <div className="h-84 overflow-hidden">
                 <img
                   src={instructor.image}
                   alt={instructor.name}

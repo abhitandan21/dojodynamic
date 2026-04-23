@@ -107,12 +107,7 @@ const galleryItems = [
     category: 'Youth',
     src: '/y1.jpg'
   },
-   {
-    type: 'image',
-    title: ' Class',
-    category: 'Youth',
-    src: '/y3.jpg'
-  },
+ 
   
  
 ];
