@@ -16,10 +16,10 @@ const userSchema = new mongoose.Schema(
       required: true
     },
 
-    // optional fields (baad me use karenge)
     registrationNo: String,
     address: String,
     fatherName: String,
+    dob: String,
 
     role: {
       type: String,

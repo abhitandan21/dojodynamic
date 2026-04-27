@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 
 const API_URL = "http://localhost:4001/api";
 
@@ -10,6 +12,7 @@ type User = {
   registrationNo?: string;
   fatherName?: string;
   address?: string;
+  dob?: string;
 };
 
 type BeltForm = {
@@ -262,50 +265,91 @@ const Dashboard = () => {
   const generateReport = () => {
     const doc = new jsPDF();
 
-    doc.setFontSize(16);
+    doc.setFontSize(18);
+    doc.setTextColor(0, 0, 0);
     doc.text("Abhishek Martial Arts and Sports Academy", 20, 20);
 
     doc.setFontSize(12);
     doc.text(`Student Name: ${user?.name || "N/A"}`, 20, 35);
     doc.text(`Mobile: ${user?.mobile || "N/A"}`, 20, 45);
     doc.text(`Registration No: ${user?.registrationNo || "N/A"}`, 20, 55);
+    doc.text(`Father Name: ${user?.fatherName || "N/A"}`, 20, 65);
+    doc.text(`DOB: ${user?.dob || "N/A"}`, 20, 75);
+    doc.text(`Address: ${user?.address || "N/A"}`, 20, 85);
 
     doc.setFontSize(14);
-    doc.text("Belt Details", 20, 75);
+    doc.text("Belt Details", 20, 100);
 
-    let y = 85;
-    beltData.forEach((belt, index) => {
-      doc.setFontSize(11);
-      doc.text(
-        `${index + 1}. ${belt.beltName} - Certificate No: ${belt.certNo}`,
-        20,
-        y
-      );
-      y += 10;
+    autoTable(doc, {
+      startY: 105,
+      head: [["S.No", "Belt Name", "Certificate No", "Status"]],
+      body: beltData.map((belt, index) => [
+        index + 1,
+        belt.beltName || "N/A",
+        belt.certNo || "N/A",
+        belt.status || "pending",
+      ]),
+      headStyles: {
+        fillColor: [37, 99, 235],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      bodyStyles: {
+        textColor: 20,
+      },
+      alternateRowStyles: {
+        fillColor: [245, 247, 250],
+      },
+      styles: {
+        lineColor: [200, 200, 200],
+        lineWidth: 0.2,
+        halign: "center",
+        valign: "middle",
+      },
     });
 
-    y += 10;
+    const beltTableEndY = (doc as any).lastAutoTable.finalY + 12;
+
     doc.setFontSize(14);
-    doc.text("Competition Details", 20, y);
-    y += 10;
+    doc.text("Competition Details", 20, beltTableEndY);
 
-    compData.forEach((comp, index) => {
-      doc.setFontSize(11);
-      doc.text(
-        `${index + 1}. ${comp.name} | Kata: ${comp.kata || "N/A"} | Kumite: ${comp.kumite || "N/A"
-        }`,
-        20,
-        y
-      );
-      y += 10;
+    autoTable(doc, {
+      startY: beltTableEndY + 5,
+      head: [["S.No", "Competition Name", "Kata", "Kumite", "Status"]],
+      body: compData.map((comp, index) => [
+        index + 1,
+        comp.name || comp.title || "N/A",
+        comp.kata || "N/A",
+        comp.kumite || "N/A",
+        comp.status || "pending",
+      ]),
+      headStyles: {
+        fillColor: [34, 197, 94],
+        textColor: 255,
+        fontStyle: "bold",
+      },
+      bodyStyles: {
+        textColor: 20,
+      },
+      alternateRowStyles: {
+        fillColor: [245, 247, 250],
+      },
+      styles: {
+        lineColor: [200, 200, 200],
+        lineWidth: 0.2,
+        halign: "center",
+        valign: "middle",
+      },
     });
 
-    y += 20;
+    const compTableEndY = (doc as any).lastAutoTable.finalY + 15;
+
     doc.setFontSize(12);
-    doc.text("Verified by Abhishek Martial Arts and Sports Academy", 20, y);
+    doc.text("Verified by Abhishek Martial Arts and Sports Academy", 20, compTableEndY);
 
     doc.save(`${user?.name || "student"}-report.pdf`);
   };
+
 
   return (
     <div className="flex min-h-screen bg-gray-100 mt-20">
@@ -317,6 +361,7 @@ const Dashboard = () => {
         <p><b>Name:</b> {user?.name || "N/A"}</p>
         <p><b>Mobile:</b> {user?.mobile || "N/A"}</p>
         <p><b>Reg No:</b> {user?.registrationNo || "N/A"}</p>
+        <p><b>DOB:</b> {user?.dob || "N/A"}</p>
         <p><b>Father:</b> {user?.fatherName || "N/A"}</p>
         <p><b>Address:</b> {user?.address || "N/A"}</p>
 
@@ -412,9 +457,21 @@ const Dashboard = () => {
                       <td>{i + 1}</td>
                       <td>{b.beltName}</td>
                       <td>{b.certNo}</td>
-                      <td>{b.status || "pending"}</td>
                       <td>
-                        {b.fileUrl && (
+                        <span
+                          className={
+                            b.status === "approved"
+                              ? "bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold"
+                              : b.status === "rejected"
+                                ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
+                                : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
+                          }
+                        >
+                          {b.status || "pending"}
+                        </span>
+                      </td>
+                      <td>
+                        {b.status === "approved" && b.fileUrl ? (
                           <a
                             href={`http://localhost:4001${b.fileUrl}`}
                             target="_blank"
@@ -423,11 +480,16 @@ const Dashboard = () => {
                           >
                             View
                           </a>
+                        ) : b.status === "rejected" ? (
+                          <span className="text-red-600 font-semibold">Re-upload required</span>
+                        ) : (
+                          <span className="text-yellow-600 font-semibold">Waiting for approval</span>
                         )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
+
 
               </table>
             </div>
@@ -509,9 +571,21 @@ const Dashboard = () => {
                       <td>{c.title || c.name || "N/A"}</td>
                       <td>{c.kata || "N/A"}</td>
                       <td>{c.kumite || "N/A"}</td>
-                      <td>{c.status || "pending"}</td>
                       <td>
-                        {c.fileUrl && (
+                        <span
+                          className={
+                            c.status === "approved"
+                              ? "bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold"
+                              : c.status === "rejected"
+                                ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
+                                : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
+                          }
+                        >
+                          {c.status || "pending"}
+                        </span>
+                      </td>
+                      <td>
+                        {c.status === "approved" && c.fileUrl ? (
                           <a
                             href={`http://localhost:4001${c.fileUrl}`}
                             target="_blank"
@@ -520,6 +594,10 @@ const Dashboard = () => {
                           >
                             View
                           </a>
+                        ) : c.status === "rejected" ? (
+                          <span className="text-red-600 font-semibold">Re-upload required</span>
+                        ) : (
+                          <span className="text-yellow-600 font-semibold">Waiting for approval</span>
                         )}
                       </td>
                     </tr>
@@ -527,47 +605,49 @@ const Dashboard = () => {
                 </tbody>
 
 
+
+
               </table>
             </div>
           )}
 
           {tab === "courses" && (
-  <div>
-    <h2 className="text-xl font-bold mb-4">Courses</h2>
+            <div>
+              <h2 className="text-xl font-bold mb-4">Courses</h2>
 
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-      {courses.map((course, index) => (
-        <button
-          key={index}
-          type="button"
-          onClick={() => setSelectedCourse(course.video)}
-          className="bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-lg text-sm font-semibold"
-        >
-          {course.title}
-        </button>
-      ))}
-    </div>
-{selectedCourse ? (
-  selectedCourse.includes("youtube.com") ? (
-    <iframe
-      width="100%"
-      height="400"
-      src={selectedCourse}
-      title="Course Video"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowFullScreen
-      className="rounded-lg border"
-    ></iframe>
-  ) : (
-    <video width="100%" controls className="rounded-lg border">
-      <source src={selectedCourse} type="video/mp4" />
-    </video>
-  )
-) : (
-  <p>Course select karein.</p>
-)}
-  </div>
-)}
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                {courses.map((course, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => setSelectedCourse(course.video)}
+                    className="bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-lg text-sm font-semibold"
+                  >
+                    {course.title}
+                  </button>
+                ))}
+              </div>
+              {selectedCourse ? (
+                selectedCourse.includes("youtube.com") ? (
+                  <iframe
+                    width="100%"
+                    height="400"
+                    src={selectedCourse}
+                    title="Course Video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="rounded-lg border"
+                  ></iframe>
+                ) : (
+                  <video width="100%" controls className="rounded-lg border">
+                    <source src={selectedCourse} type="video/mp4" />
+                  </video>
+                )
+              ) : (
+                <p>Course select karein.</p>
+              )}
+            </div>
+          )}
 
         </div>
       </div>

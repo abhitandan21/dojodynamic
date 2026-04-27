@@ -5,43 +5,48 @@ import jwt from "jsonwebtoken";
 // REGISTER
 export const register = async (req, res) => {
   try {
-    const { name, mobile, password } = req.body;
+    const {
+      name,
+      mobile,
+      password,
+      registrationNo,
+      fatherName,
+      dob,
+      address
+    } = req.body;
 
-    // ✅ validation
     if (!name || !mobile || !password) {
       return res.status(400).json({ msg: "All fields are required" });
     }
 
-    // ✅ check existing user
     const exist = await User.findOne({ mobile });
     if (exist) {
       return res.status(400).json({ msg: "User already exists" });
     }
 
-    // ✅ hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ create user safely
     const user = await User.create({
       name,
       mobile,
-      password: hashedPassword
+      password: hashedPassword,
+      registrationNo,
+      fatherName,
+      dob,
+      address
     });
 
     res.status(201).json({
       msg: "Signup successful",
       user
     });
-
   } catch (error) {
-    console.error(error); // 🔥 important
+    console.error(error);
     res.status(500).json({ msg: error.message });
   }
 };
 
-
-
-// LOGIN (thoda clean version)
+// LOGIN
 export const login = async (req, res) => {
   try {
     const { mobile, password } = req.body;
@@ -65,7 +70,6 @@ export const login = async (req, res) => {
     );
 
     res.json({ token, user });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: error.message });
