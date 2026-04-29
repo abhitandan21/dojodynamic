@@ -6,21 +6,36 @@ export default function Blog() {
 
   useEffect(() => {
     fetch("http://localhost:4001/api/blogs")
-      .then(res => res.json())
-      .then(data => setBlogs(data));
+      .then((res) => res.json())
+      .then((data) => setBlogs(data));
   }, []);
 
   return (
-    <div className="grid md:grid-cols-2 gap-20 p-20">
+    <div className="grid md:grid-cols-2 gap-10 p-20 bg-black min-h-screen">
 
       {blogs.map((blog: any) => (
         <Link to={`/blog/${blog._id}`} key={blog._id}>
-          <div className="border p-4 rounded">
+          <div className="border border-gray-700 rounded-lg overflow-hidden hover:scale-105 transition duration-300 shadow-lg bg-[#111]">
 
-            <img src={blog.image} className="w-full h-48 object-cover" />
+            {/* Image Updated */}
+            <div className="w-full h-55 overflow-hidden rounded-t-lg">
+              <img
+                src={blog.image}
+                alt={blog.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
 
-            <h2 className="text-xl mt-2">{blog.title}</h2>
-            <p className="text-gray-500">{blog.description}</p>
+            {/* Content */}
+            <div className="p-4">
+              <h2 className="text-xl font-bold text-white uppercase">
+                {blog.title}
+              </h2>
+
+              <p className="text-gray-400 mt-2">
+                {blog.description}
+              </p>
+            </div>
 
           </div>
         </Link>
