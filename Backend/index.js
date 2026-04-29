@@ -160,7 +160,7 @@ app.get("/api/nunchaku", async (req, res) => {
 
 
 // server start
-/*app.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
@@ -175,4 +175,4 @@ app.listen(4001, () => {
 // new added 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-}):*/
+});
