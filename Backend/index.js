@@ -44,7 +44,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // middleware
-app.use(cors());
+app.use(cors({
+  origin: ["https://www.amaasa.com", "https://amaasa.com"],
+  credentials: true
+}));
 app.use(express.json());
 
 // new added 
