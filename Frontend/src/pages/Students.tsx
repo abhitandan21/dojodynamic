@@ -5,7 +5,7 @@ const Students = () => {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:4001/api/students")
+    fetch("https://dojodynamic222.onrender.com/api/students")
       .then(res => res.json())
       .then(setData);
   }, []);

@@ -4,7 +4,7 @@ const Lathi = () => {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:4001/api/lathi")
+    fetch("https://dojodynamic222.onrender.com/api/lathi")
       .then(res => res.json())
       .then(setData);
   }, []);

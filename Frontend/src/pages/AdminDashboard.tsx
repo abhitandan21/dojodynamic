@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Clock3, Shield, Users } from "lucide-react";
 
-const API_URL = "http://localhost:4001/api";
+const API_URL = "https://dojodynamic222.onrender.com/api";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();

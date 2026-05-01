@@ -6,7 +6,7 @@ const CompetitionDetails = () => {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`http://localhost:4001/api/competition/${id}`)
+    fetch(`https://dojodynamic222.onrender.com/${id}`)
       .then(res => res.json())
       .then(setData)
       .catch(err => console.error(err));

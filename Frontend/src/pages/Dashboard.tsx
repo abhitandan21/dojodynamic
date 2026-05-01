@@ -3,7 +3,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 
-const API_URL = "http://localhost:4001/api";
+const API_URL = "https://dojodynamic222.onrender.com/api";
 
 type User = {
   _id?: string;
@@ -473,7 +473,7 @@ const Dashboard = () => {
                       <td>
                         {b.status === "approved" && b.fileUrl ? (
                           <a
-                            href={`http://localhost:4001${b.fileUrl}`}
+                            href={`https://dojodynamic222.onrender.com${b.fileUrl}`}
                             target="_blank"
                             rel="noreferrer"
                             className="bg-blue-500 text-white px-3 py-1 rounded"
@@ -587,7 +587,7 @@ const Dashboard = () => {
                       <td>
                         {c.status === "approved" && c.fileUrl ? (
                           <a
-                            href={`http://localhost:4001${c.fileUrl}`}
+                            href={`https://dojodynamic222.onrender.com1${c.fileUrl}`}
                             target="_blank"
                             rel="noreferrer"
                             className="bg-green-500 text-white px-3 py-1 rounded"

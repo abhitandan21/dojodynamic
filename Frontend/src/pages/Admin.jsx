@@ -4,13 +4,14 @@ export default function Admin() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/admin/certificates")
+    fetch("https://dojodynamic222.onrender.com/api/admin/certificates")
       .then((res) => res.json())
       .then((d) => setData(d));
   }, []);
 
   const approve = async (id) => {
-    await fetch(`http://localhost:4000/api/admin/approve/${id}`, {
+    await fetch(`https://dojodynamic222.onrender.com
+/api/admin/approve/${id}`, {
       method: "PUT",
     });
 
