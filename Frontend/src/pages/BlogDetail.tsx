@@ -6,7 +6,7 @@ export default function BlogDetail() {
   const [blog, setBlog] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`https://dojodynamic222.onrender.com/${id}`)
+    fetch(`https://dojodynamic222.onrender.com/api/blogs/${id}`)
       .then((res) => res.json())
       .then((data) => setBlog(data));
   }, [id]);

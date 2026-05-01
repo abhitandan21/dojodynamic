@@ -1,17 +1,25 @@
-import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
-import { Button } from './ui/button';
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
+import { Button } from "./ui/button";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const navLinks = [
-  { href: '#about', label: 'About' },
-  { href: '#instructors', label: 'Instructors' },
-  { href: '#classes', label: 'Classes' },
-  { href: '#schedule', label: 'Schedule' },
-  { href: '#gallery', label: 'Gallery' },
-  { href: '#testimonials', label: 'Testimonials' },
-  { href: '#contact', label: 'Contact' },
-  { href: '/blog', label: 'Blog' },
+  { href: "#about", label: "About" },
+  { href: "#instructors", label: "Instructors" },
+  { href: "#classes", label: "Classes" },
+  { href: "#schedule", label: "Schedule" },
+  { href: "#gallery", label: "Gallery" },
+  { href: "#testimonials", label: "Testimonials" },
+  { href: "#contact", label: "Contact" },
+  { href: "/blog", label: "Blog" },
+];
+
+const studentLinks = [
+  { to: "/students", label: "Students Details" },
+  { to: "/competition", label: "Competition Details" },
+  { to: "/lathi", label: "Lathi" },
+  { to: "/nunchaku", label: "Nunchaku" },
+  { to: "/help", label: "Help Desk" },
 ];
 
 export const Navbar = () => {
@@ -20,66 +28,110 @@ export const Navbar = () => {
   const [user, setUser] = useState<any>(null);
   const [studentOpen, setStudentOpen] = useState(false);
   const [mobileStudentOpen, setMobileStudentOpen] = useState(false);
+  const [pendingSection, setPendingSection] = useState<string | null>(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (location.pathname === "/" && pendingSection) {
+      setTimeout(() => {
+        const element = document.querySelector(pendingSection);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+        setPendingSection(null);
+      }, 150);
+    }
+  }, [location.pathname, pendingSection]);
 
   const handleLogout = () => {
     localStorage.removeItem("user");
-    window.location.href = "/";
+    setUser(null);
+    navigate("/");
   };
 
   const scrollToSection = (href: string) => {
+    setIsOpen(false);
+    setStudentOpen(false);
+    setMobileStudentOpen(false);
+
+    if (location.pathname !== "/") {
+      setPendingSection(href);
+      navigate("/");
+      return;
+    }
+
     const element = document.querySelector(href);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: "smooth" });
     }
-    setIsOpen(false);
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 pb-10 transition-all duration-300 ${
-      isScrolled ? 'bg-background/95 backdrop-blur-md shadow-elegant' : 'bg-transparent'
-    }`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+        ? "bg-background/95 backdrop-blur-md shadow-elegant"
+        : "bg-transparent"
+        }`}
+    >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
-
-          {/* Logo */}
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+        <div className="flex items-center justify-between h-20 gap-4">
+          <Link
+            to="/"
+            onClick={() => {
+              setIsOpen(false);
+              window.scrollTo({ top: 0, behavior: "smooth" });
             }}
-            className="flex items-center gap-3 group"
+            className="flex items-center gap-3 group min-w-0"
           >
-            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson group-hover:scale-110 transition-transform duration-300">
-              <img src="../public/logo-amsa.jpg" alt="" className="w-12 h-12 rounded-full" />
+            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+              <img
+                src="/logo-amsa.jpg"
+                alt="AMSA"
+                className="w-12 h-12 rounded-full object-cover"
+              />
             </div>
-            <div className="hidden sm:block">
-              <span className="font-display text-2xl text-foreground tracking-wider">ABHISHEK</span>
-              <span className="font-display text-2xl text-primary tracking-wider ml-2">
-                MARTIAL ARTS and SPORTS ACADEMY
+
+
+
+
+
+            <div className="hidden sm:flex flex-col min-w-0 leading-tight">
+              <span className="font-display text-xl xl:text-2xl text-foreground tracking-wider">
+                ABHISHEK MARTIAL ARTS
+              </span>
+              <span className="font-display text-xl xl:text-2xl text-primary tracking-wider">
+                AND SPORTS ACADEMY
               </span>
             </div>
-          </a>
+          </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8 justify-center">
 
-            {navLinks.map((link) => (
+
+
+
+
+
+
+
+          <div className="hidden lg:flex items-center justify-end gap-8 flex-1">
+            {navLinks.map((link) =>
               link.href === "/blog" ? (
                 <Link
                   key={link.href}
@@ -97,46 +149,52 @@ export const Navbar = () => {
                   {link.label}
                 </button>
               )
-            ))}
+            )}
 
-            {/* ✅ Student Corner (Aligned like Blog) */}
             <div
               className="relative flex items-center"
               onMouseEnter={() => setStudentOpen(true)}
               onMouseLeave={() => setStudentOpen(false)}
             >
-              <span className="font-body text-sm uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors duration-300 animated-underline cursor-pointer">
+              <button className="font-body text-sm uppercase tracking-wider text-muted-foreground hover:text-primary transition-colors duration-300 animated-underline cursor-pointer">
                 Student Corner ▾
-              </span>
+              </button>
 
               {studentOpen && (
-                <div className="absolute top-8 left-0 bg-card shadow-lg rounded-lg p-3 flex flex-col gap-2 min-w-[200px] z-50">
-
-                  <Link to="/students" className="hover:text-primary">Students Details</Link>
-                  <Link to="/competition" className="hover:text-primary">Competition Details</Link>
-                  <Link to="/lathi" className="hover:text-primary">Lathi</Link>
-                  <Link to="/nunchaku" className="hover:text-primary">Nunchaku</Link>
-                  <Link to="/help" className="hover:text-primary">Help Desk</Link>
-
+                <div className="absolute top-full left-1/2 -translate-x-1/2 pt-3 z-50">
+                  <div className="bg-card shadow-lg rounded-lg p-3 flex flex-col gap-2 min-w-[220px] text-center">
+                    {studentLinks.map((item) => (
+                      <Link
+                        key={item.to}
+                        to={item.to}
+                        className="hover:text-primary"
+                        onClick={() => setStudentOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               )}
+
             </div>
 
             {!user ? (
-              <Button size="sm" onClick={() => (window.location.href = "/login")}>
-                Login
+              <Button size="sm" asChild>
+                <Link to="/login">Login</Link>
               </Button>
             ) : (
               <>
                 {user.role === "admin" ? (
-                  <Button size="sm" onClick={() => (window.location.href = "/admin")}>
-                    Admin Panel
+                  <Button size="sm" asChild>
+                    <Link to="/admin">Admin Panel</Link>
                   </Button>
                 ) : (
-                  <Button size="sm" onClick={() => (window.location.href = "/dashboard")}>
-                    Dashboard
+                  <Button size="sm" asChild>
+                    <Link to="/dashboard">Dashboard</Link>
                   </Button>
                 )}
+
                 <Button variant="destructive" size="sm" onClick={handleLogout}>
                   Logout
                 </Button>
@@ -144,52 +202,102 @@ export const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button className="lg:hidden text-foreground p-2" onClick={() => setIsOpen(!isOpen)}>
+          <button
+            className="lg:hidden text-foreground p-2"
+            onClick={() => setIsOpen(!isOpen)}
+            aria-label="Toggle menu"
+          >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
 
-        {/* Mobile Navigation */}
-        <div className={`lg:hidden overflow-hidden transition-all duration-300 ${
-          isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-        }`}>
-          <div className="py-4 space-y-2 bg-card/95 backdrop-blur-md rounded-lg mb-4">
-
-            {navLinks.map((link) => (
+        <div
+          className={`lg:hidden overflow-hidden transition-all duration-300 ${isOpen ? "max-h-[850px] opacity-100" : "max-h-0 opacity-0"
+            }`}
+        >
+          <div className="py-4 space-y-2 bg-card/95 backdrop-blur-md rounded-lg mb-4 text-center">
+            {navLinks.map((link) =>
               link.href === "/blog" ? (
-                <Link key={link.href} to={link.href} onClick={() => setIsOpen(false)}
-                  className="block w-full px-4 py-2 text-muted-foreground">
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className="block w-full px-4 py-2 text-muted-foreground hover:text-primary"
+                >
                   {link.label}
                 </Link>
               ) : (
-                <button key={link.href} onClick={() => scrollToSection(link.href)}
-                  className="block w-full px-4 py-2 text-muted-foreground">
+                <button
+                  key={link.href}
+                  onClick={() => scrollToSection(link.href)}
+                  className="block w-full px-4 py-2 text-muted-foreground hover:text-primary"
+                >
                   {link.label}
                 </button>
               )
-            ))}
+            )}
 
-            {/* ✅ Mobile Student Corner FIX */}
             <div className="px-4 py-2 text-muted-foreground">
               <button
                 onClick={() => setMobileStudentOpen(!mobileStudentOpen)}
-                className="w-full text-left font-semibold"
+                className="w-full text-center font-semibold hover:text-primary"
               >
                 Student Corner ▾
               </button>
 
               {mobileStudentOpen && (
-                <div className="ml-3 mt-2 flex flex-col gap-2">
-                  <Link to="/students" onClick={() => setIsOpen(false)}>Students Details</Link>
-                  <Link to="/competition" onClick={() => setIsOpen(false)}>Competition Details</Link>
-                  <Link to="/lathi" onClick={() => setIsOpen(false)}>Lathi</Link>
-                  <Link to="/nunchaku" onClick={() => setIsOpen(false)}>Nunchaku</Link>
-                  <Link to="/help" onClick={() => setIsOpen(false)}>Help Desk</Link>
+                <div className="mt-3 flex flex-col gap-2 text-center">
+                  {studentLinks.map((item) => (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => {
+                        setIsOpen(false);
+                        setMobileStudentOpen(false);
+                      }}
+                      className="hover:text-primary"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
                 </div>
               )}
             </div>
 
+            <div className="px-4 pt-2">
+              {!user ? (
+                <Button size="sm" asChild className="w-full">
+                  <Link to="/login" onClick={() => setIsOpen(false)}>
+                    Login
+                  </Link>
+                </Button>
+              ) : (
+                <div className="space-y-2">
+                  {user.role === "admin" ? (
+                    <Button size="sm" asChild className="w-full">
+                      <Link to="/admin" onClick={() => setIsOpen(false)}>
+                        Admin Panel
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button size="sm" asChild className="w-full">
+                      <Link to="/dashboard" onClick={() => setIsOpen(false)}>
+                        Dashboard
+                      </Link>
+                    </Button>
+                  )}
+
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={handleLogout}
+                    className="w-full"
+                  >
+                    Logout
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ const Competition = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://dojodynamic222.onrender.com/competition")
+    fetch("https://dojodynamic222.onrender.com/api/competition")
       .then(res => res.json())
       .then((resData) => {
         setData(resData);
