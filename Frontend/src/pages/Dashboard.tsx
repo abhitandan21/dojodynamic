@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-
 const API_URL = "https://dojodynamic222.onrender.com/api";
+const BASE_URL = "https://dojodynamic222.onrender.com";
 
 type User = {
   _id?: string;
@@ -28,7 +28,42 @@ type CompForm = {
   file: File | null;
 };
 
-const MAX_FILE_SIZE = 90 * 1024;
+const MAX_FILE_SIZE = 200 * 1024;
+
+const getArray = (data: any) => {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.data)) return data.data;
+  if (Array.isArray(data.belts)) return data.belts;
+  if (Array.isArray(data.achievements)) return data.achievements;
+  if (Array.isArray(data.competitions)) return data.competitions;
+  return [];
+};
+
+const getValue = (obj: any, keys: string[], fallback = "N/A") => {
+  for (const key of keys) {
+    if (obj?.[key] !== undefined && obj?.[key] !== null && obj?.[key] !== "") {
+      return obj[key];
+    }
+  }
+
+  return fallback;
+};
+
+const getFileLink = (item: any) => {
+  const fileUrl = getValue(
+    item,
+    ["fileUrl", "certificateUrl", "certificate", "file", "image", "document"],
+    ""
+  );
+
+  if (!fileUrl) return "";
+
+  if (String(fileUrl).startsWith("http")) {
+    return fileUrl;
+  }
+
+  return `${BASE_URL}${fileUrl}`;
+};
 
 const Dashboard = () => {
   const [tab, setTab] = useState("competition");
@@ -100,8 +135,6 @@ const Dashboard = () => {
     },
   ];
 
-
-
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
 
@@ -119,31 +152,36 @@ const Dashboard = () => {
   const fetchStudentData = async (studentId: string) => {
     try {
       const beltRes = await fetch(`${API_URL}/belts/${studentId}`);
-      const achievementRes = await fetch(`${API_URL}/achievements/student/${studentId}`);
+      const achievementRes = await fetch(
+        `${API_URL}/achievements/student/${studentId}`
+      );
 
-      const belts = await beltRes.json();
-      const achievements = await achievementRes.json();
+      const beltJson = await beltRes.json();
+      const achievementJson = await achievementRes.json();
 
-      setBeltData(belts);
-      setCompData(achievements);
+      setBeltData(getArray(beltJson));
+      setCompData(getArray(achievementJson));
     } catch (error) {
       console.log("Data load error:", error);
     }
   };
 
-
-
   const validateFile = (file: File | null) => {
     if (!file) return "PDF ya image upload karna required hai.";
 
-    const allowedTypes = ["application/pdf", "image/jpeg", "image/png", "image/jpg"];
+    const allowedTypes = [
+      "application/pdf",
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+    ];
 
     if (!allowedTypes.includes(file.type)) {
       return "Sirf PDF, JPG, JPEG ya PNG file allowed hai.";
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return "Warning: File 90KB se jyada nahi honi chahiye.";
+      return "Warning: File 200KB se jyada nahi honi chahiye.";
     }
 
     return "";
@@ -185,17 +223,20 @@ const Dashboard = () => {
       formData.append("studentId", user?._id || "");
       formData.append("beltName", beltForm.beltName);
       formData.append("certNo", beltForm.certNo);
-      formData.append("file", beltForm.file);
+
+      if (beltForm.file) {
+        formData.append("file", beltForm.file);
+      }
 
       const res = await fetch(`${API_URL}/belts`, {
         method: "POST",
         body: formData,
       });
 
-
       const savedBelt = await res.json();
+      const newBelt = savedBelt.data || savedBelt.belt || savedBelt;
 
-      setBeltData([...beltData, savedBelt]);
+      setBeltData([...beltData, newBelt]);
       setBeltForm({ beltName: "", certNo: "", file: null });
       setBeltError("");
     } catch (error) {
@@ -243,18 +284,24 @@ const Dashboard = () => {
       formData.append("name", compForm.name);
       formData.append("kata", compForm.kata);
       formData.append("kumite", compForm.kumite);
-      formData.append("file", compForm.file);
 
+      if (compForm.file) {
+        formData.append("file", compForm.file);
+      }
 
       const res = await fetch(`${API_URL}/achievements/competition`, {
         method: "POST",
         body: formData,
       });
 
-
       const savedCompetition = await res.json();
+      const newCompetition =
+        savedCompetition.data ||
+        savedCompetition.achievement ||
+        savedCompetition.competition ||
+        savedCompetition;
 
-      setCompData([...compData, savedCompetition]);
+      setCompData([...compData, newCompetition]);
       setCompForm({ name: "", kata: "", kumite: "", file: null });
       setCompError("");
     } catch (error) {
@@ -265,29 +312,39 @@ const Dashboard = () => {
   const generateReport = () => {
     const doc = new jsPDF();
 
-    doc.setFontSize(18);
     doc.setTextColor(0, 0, 0);
+
+    doc.setFontSize(18);
     doc.text("Abhishek Martial Arts and Sports Academy", 20, 20);
 
+    doc.setFontSize(11);
+    doc.text("Affiliated with Phoenix Karate To Association India", 20, 28);
+    doc.text("Registered under MSME", 20, 35);
+
     doc.setFontSize(12);
-    doc.text(`Student Name: ${user?.name || "N/A"}`, 20, 35);
-    doc.text(`Mobile: ${user?.mobile || "N/A"}`, 20, 45);
-    doc.text(`Registration No: ${user?.registrationNo || "N/A"}`, 20, 55);
-    doc.text(`Father Name: ${user?.fatherName || "N/A"}`, 20, 65);
-    doc.text(`DOB: ${user?.dob || "N/A"}`, 20, 75);
-    doc.text(`Address: ${user?.address || "N/A"}`, 20, 85);
+    doc.text(`Student Name: ${user?.name || "N/A"}`, 20, 50);
+    doc.text(`Mobile: ${user?.mobile || "N/A"}`, 20, 60);
+    doc.text(`Registration No: ${user?.registrationNo || "N/A"}`, 20, 70);
+    doc.text(`Father Name: ${user?.fatherName || "N/A"}`, 20, 80);
+    doc.text(`DOB: ${user?.dob || "N/A"}`, 20, 90);
+    doc.text(`Address: ${user?.address || "N/A"}`, 20, 100);
 
     doc.setFontSize(14);
-    doc.text("Belt Details", 20, 100);
+    doc.text("Belt Details", 20, 115);
 
     autoTable(doc, {
-      startY: 105,
+      startY: 120,
       head: [["S.No", "Belt Name", "Certificate No", "Status"]],
       body: beltData.map((belt, index) => [
         index + 1,
-        belt.beltName || "N/A",
-        belt.certNo || "N/A",
-        belt.status || "pending",
+        getValue(belt, ["beltName", "belt", "name", "title"]),
+        getValue(belt, [
+          "certNo",
+          "certificateNo",
+          "certificateNumber",
+          "certNumber",
+        ]),
+        getValue(belt, ["status"], "pending"),
       ]),
       headStyles: {
         fillColor: [37, 99, 235],
@@ -318,10 +375,10 @@ const Dashboard = () => {
       head: [["S.No", "Competition Name", "Kata", "Kumite", "Status"]],
       body: compData.map((comp, index) => [
         index + 1,
-        comp.name || comp.title || "N/A",
-        comp.kata || "N/A",
-        comp.kumite || "N/A",
-        comp.status || "pending",
+        getValue(comp, ["name", "competitionName", "title", "eventName"]),
+        getValue(comp, ["kata", "kataMedal", "kataResult"]),
+        getValue(comp, ["kumite", "kumiteMedal", "kumiteResult"]),
+        getValue(comp, ["status"], "pending"),
       ]),
       headStyles: {
         fillColor: [34, 197, 94],
@@ -345,11 +402,14 @@ const Dashboard = () => {
     const compTableEndY = (doc as any).lastAutoTable.finalY + 15;
 
     doc.setFontSize(12);
-    doc.text("Verified by Abhishek Martial Arts and Sports Academy", 20, compTableEndY);
+    doc.text(
+      "Verified by Abhishek Martial Arts and Sports Academy",
+      20,
+      compTableEndY
+    );
 
     doc.save(`${user?.name || "student"}-report.pdf`);
   };
-
 
   return (
     <div className="flex min-h-screen bg-gray-100 mt-20">
@@ -450,30 +510,36 @@ const Dashboard = () => {
                   </tr>
                 </thead>
 
-
                 <tbody>
                   {beltData.map((b, i) => (
                     <tr key={i} className="text-center border-t">
                       <td>{i + 1}</td>
-                      <td>{b.beltName}</td>
-                      <td>{b.certNo}</td>
+                      <td>{getValue(b, ["beltName", "belt", "name", "title"])}</td>
+                      <td>
+                        {getValue(b, [
+                          "certNo",
+                          "certificateNo",
+                          "certificateNumber",
+                          "certNumber",
+                        ])}
+                      </td>
                       <td>
                         <span
                           className={
                             b.status === "approved"
                               ? "bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold"
                               : b.status === "rejected"
-                                ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
-                                : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
+                              ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
+                              : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
                           }
                         >
                           {b.status || "pending"}
                         </span>
                       </td>
                       <td>
-                        {b.status === "approved" && b.fileUrl ? (
+                        {b.status === "approved" && getFileLink(b) ? (
                           <a
-                            href={`https://dojodynamic222.onrender.com${b.fileUrl}`}
+                            href={getFileLink(b)}
                             target="_blank"
                             rel="noreferrer"
                             className="bg-blue-500 text-white px-3 py-1 rounded"
@@ -481,16 +547,18 @@ const Dashboard = () => {
                             View
                           </a>
                         ) : b.status === "rejected" ? (
-                          <span className="text-red-600 font-semibold">Re-upload required</span>
+                          <span className="text-red-600 font-semibold">
+                            Re-upload required
+                          </span>
                         ) : (
-                          <span className="text-yellow-600 font-semibold">Waiting for approval</span>
+                          <span className="text-yellow-600 font-semibold">
+                            Waiting for approval
+                          </span>
                         )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
-
-
               </table>
             </div>
           )}
@@ -551,6 +619,7 @@ const Dashboard = () => {
                   Add
                 </button>
               </div>
+
               <table className="w-full border text-black">
                 <thead className="bg-gray-200">
                   <tr>
@@ -563,31 +632,39 @@ const Dashboard = () => {
                   </tr>
                 </thead>
 
-
                 <tbody>
                   {compData.map((c, i) => (
                     <tr key={i} className="text-center border-t">
                       <td>{i + 1}</td>
-                      <td>{c.title || c.name || "N/A"}</td>
-                      <td>{c.kata || "N/A"}</td>
-                      <td>{c.kumite || "N/A"}</td>
+                      <td>
+                        {getValue(c, [
+                          "name",
+                          "competitionName",
+                          "title",
+                          "eventName",
+                        ])}
+                      </td>
+                      <td>{getValue(c, ["kata", "kataMedal", "kataResult"])}</td>
+                      <td>
+                        {getValue(c, ["kumite", "kumiteMedal", "kumiteResult"])}
+                      </td>
                       <td>
                         <span
                           className={
                             c.status === "approved"
                               ? "bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold"
                               : c.status === "rejected"
-                                ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
-                                : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
+                              ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
+                              : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
                           }
                         >
                           {c.status || "pending"}
                         </span>
                       </td>
                       <td>
-                        {c.status === "approved" && c.fileUrl ? (
+                        {c.status === "approved" && getFileLink(c) ? (
                           <a
-                            href={`https://dojodynamic222.onrender.com1${c.fileUrl}`}
+                            href={getFileLink(c)}
                             target="_blank"
                             rel="noreferrer"
                             className="bg-green-500 text-white px-3 py-1 rounded"
@@ -595,18 +672,18 @@ const Dashboard = () => {
                             View
                           </a>
                         ) : c.status === "rejected" ? (
-                          <span className="text-red-600 font-semibold">Re-upload required</span>
+                          <span className="text-red-600 font-semibold">
+                            Re-upload required
+                          </span>
                         ) : (
-                          <span className="text-yellow-600 font-semibold">Waiting for approval</span>
+                          <span className="text-yellow-600 font-semibold">
+                            Waiting for approval
+                          </span>
                         )}
                       </td>
                     </tr>
                   ))}
                 </tbody>
-
-
-
-
               </table>
             </div>
           )}
@@ -627,6 +704,7 @@ const Dashboard = () => {
                   </button>
                 ))}
               </div>
+
               {selectedCourse ? (
                 selectedCourse.includes("youtube.com") ? (
                   <iframe
@@ -648,7 +726,6 @@ const Dashboard = () => {
               )}
             </div>
           )}
-
         </div>
       </div>
     </div>
