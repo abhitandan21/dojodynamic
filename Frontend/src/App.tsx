@@ -32,7 +32,7 @@ import Lathi from "./pages/Lathi";
 import Nunchaku from "./pages/Nunchaku";
 import HelpDesk from "./pages/HelpDesk";
 import CompetitionDetails from "./pages/CompetitionDetails";
-import Courses from "./Courses";
+import Courses from "./pages/Courses";
 
 
 // import helpdesk
