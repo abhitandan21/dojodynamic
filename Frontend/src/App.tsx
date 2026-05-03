@@ -32,6 +32,8 @@ import Lathi from "./pages/Lathi";
 import Nunchaku from "./pages/Nunchaku";
 import HelpDesk from "./pages/HelpDesk";
 import CompetitionDetails from "./pages/CompetitionDetails";
+import Courses from "./Courses";
+
 
 // import helpdesk
 
@@ -85,6 +87,8 @@ const App = () => (
           <Route path="/nunchaku" element={<Nunchaku />} />
           <Route path="/help" element={<HelpDesk />} />
            <Route path="/competition/:id" element={<CompetitionDetails />} />
+           <Route path="/courses" element={<Courses />} />
+
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

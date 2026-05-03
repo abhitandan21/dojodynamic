@@ -3,7 +3,7 @@ import { Award, Medal, Users } from 'lucide-react';
 const instructors = [
 
    {
-    name: 'Renshi AMOL TALUKDAR',
+    name: 'Renshi AMaL TALUKDAR',
     title: 'Secretary CGKDA • 6th Dan',
     bio: 'With over 40 years of dedicated practice.',
     specialties: ['Youth Training', 'Competition Prep', 'Self-Defense'],

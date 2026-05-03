@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -86,54 +87,6 @@ const Dashboard = () => {
 
   const [beltError, setBeltError] = useState("");
   const [compError, setCompError] = useState("");
-  const [selectedCourse, setSelectedCourse] = useState("");
-
-  const courses = [
-    {
-      title: "Personality Development",
-      video: "https://www.youtube.com/embed/WQId4YdlxTQ",
-    },
-    {
-      title: "White Belt",
-      video: "https://www.youtube.com/embed/pcbB5Ybmplg?si=facc4P_0TAXIQvTh",
-    },
-    {
-      title: "Yellow Belt",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-    {
-      title: "Orange Belt",
-      video: "https://www.w3schools.com/html/movie.mp4",
-    },
-    {
-      title: "Green Belt",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-    {
-      title: "Blue Belt",
-      video: "https://www.w3schools.com/html/movie.mp4",
-    },
-    {
-      title: "Purple Belt",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-    {
-      title: "Brown II",
-      video: "https://www.w3schools.com/html/movie.mp4",
-    },
-    {
-      title: "Brown I",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-    {
-      title: "Plain Brown",
-      video: "https://www.w3schools.com/html/movie.mp4",
-    },
-    {
-      title: "Black Belt",
-      video: "https://www.w3schools.com/html/mov_bbb.mp4",
-    },
-  ];
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -351,9 +304,6 @@ const Dashboard = () => {
         textColor: 255,
         fontStyle: "bold",
       },
-      bodyStyles: {
-        textColor: 20,
-      },
       alternateRowStyles: {
         fillColor: [245, 247, 250],
       },
@@ -384,9 +334,6 @@ const Dashboard = () => {
         fillColor: [34, 197, 94],
         textColor: 255,
         fontStyle: "bold",
-      },
-      bodyStyles: {
-        textColor: 20,
       },
       alternateRowStyles: {
         fillColor: [245, 247, 250],
@@ -449,12 +396,12 @@ const Dashboard = () => {
             Competition
           </button>
 
-          <button
-            onClick={() => setTab("courses")}
+          <Link
+            to="/courses"
             className="bg-purple-500 text-white px-8 py-4 text-lg rounded-xl"
           >
             Courses
-          </button>
+          </Link>
         </div>
 
         <div className="bg-white p-6 rounded-xl shadow-md text-black">
@@ -645,9 +592,7 @@ const Dashboard = () => {
                         ])}
                       </td>
                       <td>{getValue(c, ["kata", "kataMedal", "kataResult"])}</td>
-                      <td>
-                        {getValue(c, ["kumite", "kumiteMedal", "kumiteResult"])}
-                      </td>
+                      <td>{getValue(c, ["kumite", "kumiteMedal", "kumiteResult"])}</td>
                       <td>
                         <span
                           className={
@@ -685,45 +630,6 @@ const Dashboard = () => {
                   ))}
                 </tbody>
               </table>
-            </div>
-          )}
-
-          {tab === "courses" && (
-            <div>
-              <h2 className="text-xl font-bold mb-4">Courses</h2>
-
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                {courses.map((course, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => setSelectedCourse(course.video)}
-                    className="bg-purple-500 hover:bg-purple-600 text-white p-3 rounded-lg text-sm font-semibold"
-                  >
-                    {course.title}
-                  </button>
-                ))}
-              </div>
-
-              {selectedCourse ? (
-                selectedCourse.includes("youtube.com") ? (
-                  <iframe
-                    width="100%"
-                    height="400"
-                    src={selectedCourse}
-                    title="Course Video"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="rounded-lg border"
-                  ></iframe>
-                ) : (
-                  <video width="100%" controls className="rounded-lg border">
-                    <source src={selectedCourse} type="video/mp4" />
-                  </video>
-                )
-              ) : (
-                <p>Course select karein.</p>
-              )}
             </div>
           )}
         </div>
