@@ -54,11 +54,7 @@ export const AboutSection = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80" />
               <div className="absolute inset-0 flex items-center justify-center">
                 {/*<span className="font-display text-[15rem] text-primary/10 select-none">道</span>*/}
-                <img
-                  src="/c2.jpeg"
-                  alt="Banner"
-                  className="h-full w-full object-cover"
-                />
+               <img src="/C2.jpeg" alt="Banner" className="h-full w-full object-cover" />
 
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-8">
@@ -96,11 +92,7 @@ export const AboutSection = () => {
             <div className="grid grid-cols-2 gap-6">
 
               <div className="bg-card p-6 rounded-lg border border-border text-center">
-                <img
-                  src="/aff1.jpeg"
-                  alt="Affiliation Certificate"
-                  className="w-full h-40 object-cover rounded-md mb-4"
-                />
+                <img src="/aff1.jpeg" alt="Banner" className="h-full w-full object-cover" />
 
                 <p className="font-body text-sm text-muted-foreground">
                   Affiliation Certificate

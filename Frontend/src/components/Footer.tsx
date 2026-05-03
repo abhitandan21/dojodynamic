@@ -49,7 +49,7 @@ export const Footer = () => {
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson">
                
-               <img src="../public/logo-amsa.jpg" alt="" className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson group-hover:scale-110 transition-transform duration-300"/>
+               <img src="../public/logo-amasa.jpg" alt="" className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson group-hover:scale-110 transition-transform duration-300"/>
 
               </div>
                 
