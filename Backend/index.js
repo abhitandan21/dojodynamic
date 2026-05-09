@@ -45,7 +45,11 @@ const __dirname = path.dirname(__filename);
 
 // middleware
 app.use(cors({
-  origin: ["https://www.amaasa.com", "https://amaasa.com"],
+  origin: ["https://www.amaasa.com", 
+    "https://amaasa.com",
+  "https://vercel.com/abhitandan21s-projects/dojodynamic"
+  
+  ],
   credentials: true
 }));
 app.use(express.json());
@@ -163,19 +167,9 @@ app.get("/api/nunchaku", async (req, res) => {
 
 
 // server start
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
 
 
 
-// helpdesk
-app.listen(4001, () => {
-  console.log("Server running on port 4001");
-});
-
-
-// new added 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
