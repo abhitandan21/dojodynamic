@@ -10,8 +10,7 @@ export default function Admin() {
   }, []);
 
   const approve = async (id) => {
-    await fetch(`https://dojodynamic222.onrender.com
-/api/admin/approve/${id}`, {
+    await fetch(`https://dojodynamic222.onrender.com/api/admin/approve/${id}`, {
       method: "PUT",
     });
 
