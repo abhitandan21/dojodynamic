@@ -1,3 +1,4 @@
+// Backend/middleware/upload.js
 import multer from "multer";
 import path from "path";
 import fs from "fs";
@@ -37,7 +38,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   limits: {
-    fileSize: 40 * 1024,
+    fileSize: 5 * 1024 * 1024,
   },
   fileFilter,
 });

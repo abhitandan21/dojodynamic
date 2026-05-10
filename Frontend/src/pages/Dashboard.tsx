@@ -29,7 +29,7 @@ type CompForm = {
   file: File | null;
 };
 
-const MAX_FILE_SIZE = 200 * 1024;
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const getArray = (data: any) => {
   if (Array.isArray(data)) return data;
@@ -134,7 +134,7 @@ const Dashboard = () => {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return "Warning: File 200KB se jyada nahi honi chahiye.";
+      return "File 5MB se jyada nahi honi chahiye.";
     }
 
     return "";
@@ -186,14 +186,25 @@ const Dashboard = () => {
         body: formData,
       });
 
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData?.message || "Belt details save nahi ho paya.");
+      }
+
       const savedBelt = await res.json();
       const newBelt = savedBelt.data || savedBelt.belt || savedBelt;
 
       setBeltData([...beltData, newBelt]);
       setBeltForm({ beltName: "", certNo: "", file: null });
       setBeltError("");
+
+      if (user?._id) {
+        fetchStudentData(user._id);
+      }
     } catch (error) {
-      setBeltError("Belt details save nahi ho paya.");
+      setBeltError(
+        error instanceof Error ? error.message : "Belt details save nahi ho paya."
+      );
     }
   };
 
@@ -247,6 +258,13 @@ const Dashboard = () => {
         body: formData,
       });
 
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(
+          errorData?.message || "Competition details save nahi ho paya."
+        );
+      }
+
       const savedCompetition = await res.json();
       const newCompetition =
         savedCompetition.data ||
@@ -257,8 +275,16 @@ const Dashboard = () => {
       setCompData([...compData, newCompetition]);
       setCompForm({ name: "", kata: "", kumite: "", file: null });
       setCompError("");
+
+      if (user?._id) {
+        fetchStudentData(user._id);
+      }
     } catch (error) {
-      setCompError("Competition details save nahi ho paya.");
+      setCompError(
+        error instanceof Error
+          ? error.message
+          : "Competition details save nahi ho paya."
+      );
     }
   };
 

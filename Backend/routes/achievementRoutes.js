@@ -1,3 +1,4 @@
+// Backend/routes/achievementRoutes.js
 import express from "express";
 import multer from "multer";
 import Achievement from "../model/Achievement.js";
@@ -9,8 +10,14 @@ router.post("/competition", (req, res) => {
   upload.single("file")(req, res, async (error) => {
     try {
       if (error instanceof multer.MulterError) {
+        if (error.code === "LIMIT_FILE_SIZE") {
+          return res.status(400).json({
+            message: "File 5MB se jyada nahi honi chahiye",
+          });
+        }
+
         return res.status(400).json({
-          message: "File 40KB se jyada nahi honi chahiye",
+          message: error.message,
         });
       }
 
