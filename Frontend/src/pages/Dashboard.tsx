@@ -290,29 +290,47 @@ const Dashboard = () => {
 
   const generateReport = () => {
     const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const generatedOn = new Date().toLocaleString("en-IN");
 
-    doc.setTextColor(0, 0, 0);
+    doc.setFillColor(17, 24, 39);
+    doc.rect(0, 0, pageWidth, 36, "F");
 
-    doc.setFontSize(18);
-    doc.text("Abhishek Martial Arts and Sports Academy", 20, 20);
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(16);
+    doc.text("ABHISHEK MARTIAL ARTS AND SPORTS ACADEMY", 14, 14);
 
-    doc.setFontSize(11);
-    doc.text("Affiliated with Phoenix Karate To Association India", 20, 28);
-    doc.text("Registered under MSME", 20, 35);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.text("Student Performance & Verification Report", 14, 21);
+    doc.text(`Generated: ${generatedOn}`, 14, 28);
 
+    doc.setTextColor(31, 41, 55);
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(12);
-    doc.text(`Student Name: ${user?.name || "N/A"}`, 20, 50);
-    doc.text(`Mobile: ${user?.mobile || "N/A"}`, 20, 60);
-    doc.text(`Registration No: ${user?.registrationNo || "N/A"}`, 20, 70);
-    doc.text(`Father Name: ${user?.fatherName || "N/A"}`, 20, 80);
-    doc.text(`DOB: ${user?.dob || "N/A"}`, 20, 90);
-    doc.text(`Address: ${user?.address || "N/A"}`, 20, 100);
+    doc.text("Student Information", 14, 48);
 
-    doc.setFontSize(14);
-    doc.text("Belt Details", 20, 115);
+    doc.setDrawColor(226, 232, 240);
+    doc.setFillColor(248, 250, 252);
+    doc.roundedRect(14, 52, pageWidth - 28, 40, 2, 2, "FD");
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10.5);
+    doc.text(`Name: ${user?.name || "N/A"}`, 18, 61);
+    doc.text(`Mobile: ${user?.mobile || "N/A"}`, 18, 68);
+    doc.text(`Registration No: ${user?.registrationNo || "N/A"}`, 18, 75);
+    doc.text(`Father Name: ${user?.fatherName || "N/A"}`, 18, 82);
+
+    doc.text(`DOB: ${user?.dob || "N/A"}`, pageWidth / 2 + 5, 61);
+    doc.text(`Address: ${user?.address || "N/A"}`, pageWidth / 2 + 5, 68);
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Belt Records", 14, 104);
 
     autoTable(doc, {
-      startY: 120,
+      startY: 108,
       head: [["S.No", "Belt Name", "Certificate No", "Status"]],
       body: beltData.map((belt, index) => [
         index + 1,
@@ -326,28 +344,31 @@ const Dashboard = () => {
         getValue(belt, ["status"], "pending"),
       ]),
       headStyles: {
-        fillColor: [37, 99, 235],
+        fillColor: [30, 64, 175],
         textColor: 255,
         fontStyle: "bold",
       },
       alternateRowStyles: {
-        fillColor: [245, 247, 250],
+        fillColor: [248, 250, 252],
       },
       styles: {
-        lineColor: [200, 200, 200],
+        fontSize: 10,
+        lineColor: [226, 232, 240],
         lineWidth: 0.2,
         halign: "center",
         valign: "middle",
       },
+      margin: { left: 14, right: 14 },
     });
 
     const beltTableEndY = (doc as any).lastAutoTable.finalY + 12;
 
-    doc.setFontSize(14);
-    doc.text("Competition Details", 20, beltTableEndY);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.text("Competition Achievements", 14, beltTableEndY);
 
     autoTable(doc, {
-      startY: beltTableEndY + 5,
+      startY: beltTableEndY + 4,
       head: [["S.No", "Competition Name", "Kata", "Kumite", "Status"]],
       body: compData.map((comp, index) => [
         index + 1,
@@ -357,29 +378,36 @@ const Dashboard = () => {
         getValue(comp, ["status"], "pending"),
       ]),
       headStyles: {
-        fillColor: [34, 197, 94],
+        fillColor: [21, 128, 61],
         textColor: 255,
         fontStyle: "bold",
       },
       alternateRowStyles: {
-        fillColor: [245, 247, 250],
+        fillColor: [248, 250, 252],
       },
       styles: {
-        lineColor: [200, 200, 200],
+        fontSize: 10,
+        lineColor: [226, 232, 240],
         lineWidth: 0.2,
         halign: "center",
         valign: "middle",
       },
+      margin: { left: 14, right: 14 },
     });
 
-    const compTableEndY = (doc as any).lastAutoTable.finalY + 15;
+    const compTableEndY = (doc as any).lastAutoTable.finalY + 14;
 
-    doc.setFontSize(12);
+    doc.setDrawColor(226, 232, 240);
+    doc.line(14, compTableEndY, pageWidth - 14, compTableEndY);
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(10);
+    doc.setTextColor(75, 85, 99);
     doc.text(
       "Verified by Abhishek Martial Arts and Sports Academy",
-      20,
-      compTableEndY
+      14,
+      compTableEndY + 7
     );
+    doc.text(`Page 1`, pageWidth - 24, compTableEndY + 7);
 
     doc.save(`${user?.name || "student"}-report.pdf`);
   };

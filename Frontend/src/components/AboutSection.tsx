@@ -54,7 +54,7 @@ export const AboutSection = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/80" />
               <div className="absolute inset-0 flex items-center justify-center">
                 {/*<span className="font-display text-[15rem] text-primary/10 select-none">道</span>*/}
-               <img src="/C2.jpeg" alt="Banner" className="h-full w-full object-cover" />
+               <img src="/c2.jpeg" alt="Banner" className="h-full w-full object-cover" />
 
               </div>
               <div className="absolute bottom-0 left-0 right-0 p-8">
