@@ -3,7 +3,18 @@ import { ChevronLeft, Eye, EyeOff, Lock, Phone } from "lucide-react";
 import { Button } from "../components/ui/button";
 import { Link } from "react-router-dom";
 
-const BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://dojodynamic222.onrender.com/api" || "http://localhost:4001/api";
+const ENV_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+const IS_LOCAL_HOST =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+const BASE_URL =
+  !IS_LOCAL_HOST && ENV_BACKEND_URL?.includes("localhost")
+    ? "https://dojodynamic222.onrender.com/api"
+    : ENV_BACKEND_URL ||
+      (IS_LOCAL_HOST
+        ? "http://localhost:4001/api"
+        : "https://dojodynamic222.onrender.com/api");
 
 export default function Login() {
   const [mobile, setMobile] = useState("");
