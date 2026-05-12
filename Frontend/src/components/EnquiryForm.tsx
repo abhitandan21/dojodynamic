@@ -24,7 +24,7 @@ export const EnquiryForm = () => {
     try {
       setIsSubmitting(true);
 
-      const res = await fetch("http://localhost:4001/api/enquiries", {
+      const res = await fetch("https://dojodynamic222.onrender.com/api/enquiries", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

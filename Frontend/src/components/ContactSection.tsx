@@ -75,7 +75,7 @@ export const ContactSection = () => {
   try {
     setIsSubmitting(true);
 
-    const response = await fetch("http://localhost:4001/api/enquiries", {
+    const response = await fetch("https://dojodynamic222.onrender.com/api/enquiries", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -243,10 +243,10 @@ export const ContactSection = () => {
                       }`}
                     >
                       <option value="">Select a program</option>
-                      <option value="little-dragons">Little Dragons (4-7)</option>
-                      <option value="junior">Junior Karate (8-14)</option>
-                      <option value="adult">Adult Karate (15+)</option>
-                      <option value="competition">Competition Team</option>
+                      <option value="Karate">Little Dragons (4-7)</option>
+                      <option value="Lathi Training">Junior Karate (8-14)</option>
+                      <option value="Nunchaku Training">Adult Karate (15+)</option>
+                      <option value="Personality Development and Fitness">Competition Team</option>
                       <option value="self-defense">Self-Defense</option>
                       <option value="family">Family Program</option>
                     </select>
