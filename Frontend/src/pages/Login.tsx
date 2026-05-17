@@ -24,6 +24,14 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
+    const cleanMobile = mobile.trim();
+    const cleanPassword = password.trim();
+
+    if (!cleanMobile || !cleanPassword) {
+      setError("Mobile number aur password required hai");
+      return;
+    }
+
     setIsLoading(true);
     setError("");
 
@@ -31,7 +39,7 @@ export default function Login() {
       const res = await fetch(`${BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mobile, password }),
+        body: JSON.stringify({ mobile: cleanMobile, password: cleanPassword }),
       });
 
       const data = await res.json();
@@ -144,7 +152,7 @@ export default function Login() {
 
             <Button
               onClick={handleLogin}
-              disabled={isLoading || !mobile || !password}
+              disabled={isLoading || !mobile.trim() || !password.trim()}
               size="lg"
               className="w-full h-14 text-base font-semibold rounded-2xl bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 text-white"
             >
@@ -198,7 +206,7 @@ export default function Login() {
 
             <div className="text-center">
               <span className="text-2xl text-yellow-400 block font-bold">
-                05+
+                09+
               </span>
               <p className="text-xs text-gray-400 mt-1">Years Experience</p>
             </div>
