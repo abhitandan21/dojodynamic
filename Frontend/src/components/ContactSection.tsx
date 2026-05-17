@@ -243,12 +243,11 @@ export const ContactSection = () => {
                       }`}
                     >
                       <option value="">Select a program</option>
-                      <option value="Karate">Little Dragons (4-7)</option>
-                      <option value="Lathi Training">Junior Karate (8-14)</option>
-                      <option value="Nunchaku Training">Adult Karate (15+)</option>
-                      <option value="Personality Development and Fitness">Competition Team</option>
-                      <option value="self-defense">Self-Defense</option>
-                      <option value="family">Family Program</option>
+                      <option value="Karate">Karate</option>
+                      <option value="Lathi Training">Lathi Training</option>
+                      <option value="Nunchaku Training">Nunchaku Training</option>
+                      <option value="Personality Development and Fitness">Personality Development and Fitness</option>
+                     
                     </select>
                     {errors.program && (
                       <p className="font-body text-xs text-destructive mt-1">{errors.program}</p>

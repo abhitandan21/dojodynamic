@@ -70,7 +70,7 @@ export const EnquiryForm = () => {
 
       <textarea name="message" value={formData.message} onChange={handleChange} placeholder="Message" required className="w-full p-2 border rounded" />
 
-      <button type="submit" disabled={isSubmitting} className="w-full p-2 bg-primary text-white rounded">
+      <button type="submit" disabled={isSubmitting} className="w-full p-2 bg-primary text-purple rounded">
         {isSubmitting ? "Submitting..." : "Submit"}
       </button>
     </form>

@@ -27,7 +27,7 @@ const socialLinks = [
   { icon: Facebook, href: 'https://www.facebook.com/share/1KWqzr53HR/', label: 'Facebook' },
   { icon: Instagram, href: 'https://www.instagram.com/abhishekmartialartsacademy26?utm_source=qr&igsh=eGx0cjd3N2pxNjAw', label: 'Instagram' },
   { icon: Youtube, href: 'https://youtube.com/@abhishekmartialartsandsportsac?si=zDNOIwQSF5S24dh4', label: 'YouTube' },
- 
+
 ];
 
 export const Footer = () => {
@@ -48,11 +48,14 @@ export const Footer = () => {
           <div className="lg:col-span-2">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson">
-               
-               <img src="../public/logo-amsa.jpg" alt="" className="w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-crimson group-hover:scale-110 transition-transform duration-300"/>
 
+                <img
+                  src="/logo-amsa.jpg"
+                  alt="Logo"
+                  className="w-12 h-12 rounded-full object-cover shadow-crimson group-hover:scale-110 transition-transform duration-300"
+                />
               </div>
-                
+
 
               <div>
                 <span className="font-display text-2xl text-foreground tracking-wider">ABHISHEK MARTIAL ARTS </span>
@@ -60,7 +63,7 @@ export const Footer = () => {
               </div>
             </div>
             <p className="font-body text-muted-foreground mb-6 max-w-sm">
-              Empowering warriors since 2022. Join us on the path to self-mastery through 
+              Empowering warriors since 2022. Join us on the path to self-mastery through
               traditional  Karate Lathi Nunchaku and Sports.
             </p>
             {/* Social links */}
