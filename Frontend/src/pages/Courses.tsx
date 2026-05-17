@@ -17,6 +17,31 @@ type CourseFolder = {
 
 const courseFolders: CourseFolder[] = [
   {
+  id: "personality-development",
+  title: "Personality Development",
+  subtitle: "Confidence, discipline and communication skills",
+  color: "bg-red-100 text-red-900 border-red-300",
+  videos: [
+    {
+      title: "Core Principles of Personality Development Part 1g",
+      video: "https://www.youtube.com/embed/WQId4YdlxTQ?si=2OvN8-3_O-ZfPdvE",
+    },
+    {
+      title: "How to Develop communication skill ",
+      video: "https://www.youtube.com/embed/pG7v_mPEKD4?si=C5Cb8YMgPvUdXvox",
+    },
+    {
+      title: "How to Improve Communication Skill",
+      video: "https://www.youtube.com/embed/BiXFG91Eews?si=vJwT9OQIFfSy-CFP",
+    },
+    {
+      title: "How to Minimise mobile screen time",
+      video:"https://www.youtube.com/embed/nCFlBSz6sAA?si=3-Fv5Urwks_ESSFr",
+    },
+  ],
+},
+
+  {
     id: "white-belt",
     title: "01. White Belt",
     subtitle: "Beginner foundation training",

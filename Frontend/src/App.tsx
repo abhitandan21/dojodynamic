@@ -10,6 +10,7 @@ import { Navbar } from "./components/Navbar";
 // pages
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
+import ResetPassword from "./pages/ResetPassword";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
@@ -59,6 +60,7 @@ const App = () => (
 
           {/* auth */}
           <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/register" element={<Signup />} />
           
 

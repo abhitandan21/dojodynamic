@@ -54,7 +54,7 @@ export default function Login() {
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleLogin();
     }
@@ -72,7 +72,10 @@ export default function Login() {
           to="/"
           className="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-all duration-300 group text-sm sm:text-base py-2 px-1 mb-4"
         >
-          <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300" />
+          <ChevronLeft
+            size={20}
+            className="group-hover:-translate-x-1 transition-transform duration-300"
+          />
           <span>Back to Home</span>
         </Link>
 
@@ -177,7 +180,7 @@ export default function Login() {
 
             <p className="text-xs text-gray-400">
               <Link
-                to="/forgot-password"
+                to="/reset-password"
                 className="text-red-400 hover:underline underline-offset-2"
               >
                 Forgot password? Reset here
@@ -187,15 +190,23 @@ export default function Login() {
 
           <div className="grid grid-cols-3 gap-4 pt-8 border-t border-white/10 mt-8">
             <div className="text-center">
-              <span className="text-2xl text-red-500 block font-bold">2000+</span>
+              <span className="text-2xl text-red-500 block font-bold">
+                2000+
+              </span>
               <p className="text-xs text-gray-400 mt-1">Students Trained</p>
             </div>
+
             <div className="text-center">
-              <span className="text-2xl text-yellow-400 block font-bold">05+</span>
+              <span className="text-2xl text-yellow-400 block font-bold">
+                05+
+              </span>
               <p className="text-xs text-gray-400 mt-1">Years Experience</p>
             </div>
+
             <div className="text-center">
-              <span className="text-2xl text-red-400 block font-bold">110+</span>
+              <span className="text-2xl text-red-400 block font-bold">
+                110+
+              </span>
               <p className="text-xs text-gray-400 mt-1">Championships</p>
             </div>
           </div>
