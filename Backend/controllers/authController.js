@@ -153,12 +153,13 @@ export const login = async (req, res) => {
   }
 };
 
-// RESET PASSWORD
+/// RESET PASSWORD
 export const resetPassword = async (req, res) => {
   try {
 
     const { mobile, password } = req.body;
 
+    // Validation
     if (!mobile || !password) {
       return res.status(400).json({
         msg: "Mobile and password are required"
@@ -171,7 +172,10 @@ export const resetPassword = async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ mobile });
+    // Find existing user
+    const user = await User.findOne({
+      mobile: mobile.trim()
+    });
 
     if (!user) {
       return res.status(404).json({
@@ -179,22 +183,36 @@ export const resetPassword = async (req, res) => {
       });
     }
 
+    // Hash new password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    user.password = hashedPassword;
+    // Update password only
+    await User.findByIdAndUpdate(
+      user._id,
+      {
+        $set: {
+          password: hashedPassword
+        }
+      },
+      {
+        new: true,
+        runValidators: false
+      }
+    );
 
-    await user.save();
-
-    res.status(200).json({
+    return res.status(200).json({
+      success: true,
       msg: "Password reset successfully"
     });
 
   } catch (error) {
 
-    console.error(error);
+    console.error("RESET PASSWORD ERROR:", error);
 
-    res.status(500).json({
-      msg: error.message
+    return res.status(500).json({
+      success: false,
+      msg: "Server error",
+      error: error.message
     });
   }
 };
