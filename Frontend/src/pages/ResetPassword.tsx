@@ -5,6 +5,9 @@ const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -40,16 +43,18 @@ const ResetPassword = () => {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:5000/api/auth/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          mobile: cleanMobile,
-          password,
-        }),
-      });
+      const response = await fetch( "https://dojodynamic222.onrender.com/api/auth/reset-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            mobile: cleanMobile,
+            password,
+          }),
+        }
+      );
 
       const data = await response.json();
 
@@ -76,63 +81,95 @@ const ResetPassword = () => {
           <h1 className="text-3xl font-extrabold text-slate-950">
             Reset Password
           </h1>
+
           <p className="mt-2 text-sm font-medium text-slate-500">
             Enter your registered mobile number
           </p>
         </div>
 
         <form onSubmit={handleResetPassword} className="space-y-4">
+          {/* Mobile */}
           <div>
             <label className="mb-2 block text-sm font-bold text-slate-700">
               Mobile Number
             </label>
+
             <input
               type="tel"
               value={mobile}
               onChange={(e) => setMobile(e.target.value)}
               placeholder="Enter mobile number"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 font-medium outline-none transition focus:border-slate-900"
+              className="w-full rounded-lg border border-slate-300 px-4 py-3 text-base font-semibold text-slate-900 outline-none transition focus:border-slate-900"
             />
           </div>
 
+          {/* New Password */}
           <div>
             <label className="mb-2 block text-sm font-bold text-slate-700">
               New Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter new password"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 font-medium outline-none transition focus:border-slate-900"
-            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter new password"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 pr-16 text-base font-semibold tracking-wide text-slate-900 outline-none transition focus:border-slate-900"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-600 hover:text-slate-900"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
 
+          {/* Confirm Password */}
           <div>
             <label className="mb-2 block text-sm font-bold text-slate-700">
               Confirm Password
             </label>
-            <input
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm new password"
-              className="w-full rounded-lg border border-slate-300 px-4 py-3 font-medium outline-none transition focus:border-slate-900"
-            />
+
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm new password"
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 pr-16 text-base font-semibold tracking-wide text-slate-900 outline-none transition focus:border-slate-900"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowConfirmPassword(!showConfirmPassword)
+                }
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-600 hover:text-slate-900"
+              >
+                {showConfirmPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
 
+          {/* Error */}
           {error && (
             <div className="rounded-lg bg-red-50 px-4 py-3 text-sm font-bold text-red-700">
               {error}
             </div>
           )}
 
+          {/* Success */}
           {message && (
             <div className="rounded-lg bg-green-50 px-4 py-3 text-sm font-bold text-green-700">
               {message}
             </div>
           )}
 
+          {/* Button */}
           <button
             type="submit"
             disabled={loading}
