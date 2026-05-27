@@ -9,7 +9,7 @@ export default function AdminBlog() {
   });
 
   const handleSubmit = async () => {
-    await fetch("https://dojodynamic222.onrender.com/api/blogs", {
+    await fetch("https://api.amaasa.com/api/blogs", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

@@ -7,7 +7,7 @@ export default function AddCertificate() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const handleSubmit = async () => {
-    await fetch("https://dojodynamic222.onrender.com", {
+    await fetch("https://api.amaasa.com", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

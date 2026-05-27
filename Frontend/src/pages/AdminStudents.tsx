@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "https://dojodynamic222.onrender.com/api";
+const API_URL = "https://api.amaasa.com/api";
 
 const AdminStudents = () => {
   const navigate = useNavigate();

@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
 
-const API_URL = "https://dojodynamic222.onrender.com/api";
-const BACKEND_URL = "https://dojodynamic222.onrender.com";
+const API_URL = "https://api.amaasa.com/api";
+const BACKEND_URL = "https://api.amaasa.com";
 
 const AdminStudentDetails = () => {
   const { studentId } = useParams();

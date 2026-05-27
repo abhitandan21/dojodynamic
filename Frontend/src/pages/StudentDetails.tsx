@@ -6,7 +6,7 @@ const StudentDetails = () => {
   const [student, setStudent] = useState<any>(null);
 
   useEffect(() => {
-    fetch(`https://dojodynamic222.onrender.com/api/students/${id}`)
+    fetch(`https://api.amaasa.com/api/students/${id}`)
       .then(res => res.json())
       .then(setStudent);
   }, [id]);

@@ -4,7 +4,7 @@ const Nunchaku = () => {
   const [data, setData] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("https://dojodynamic222.onrender.com/api/nunchaku")
+    fetch("https://api.amaasa.com/api/nunchaku")
       .then(res => res.json())
       .then(setData);
   }, []);

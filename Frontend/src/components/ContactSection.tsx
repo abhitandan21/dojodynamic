@@ -75,7 +75,7 @@ export const ContactSection = () => {
   try {
     setIsSubmitting(true);
 
-    const response = await fetch("https://dojodynamic222.onrender.com/api/enquiries", {
+    const response = await fetch("https://api.amaasa.com/api/enquiries", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

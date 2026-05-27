@@ -48,7 +48,7 @@ const Signup = () => {
     try {
 
       const res = await fetch(
-        "https://dojodynamic222.onrender.com/api/auth/register",
+        "https://api.amaasa.com/api/auth/register",
         {
           method: "POST",
           headers: {

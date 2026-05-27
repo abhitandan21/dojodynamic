@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const API_URL = "https://dojodynamic222.onrender.com/api";
-const BASE_URL = "https://dojodynamic222.onrender.com";
+const API_URL = "https://api.amaasa.com/api";
+const BASE_URL = "https://api.amaasa.com";
 
 type User = {
   _id?: string;

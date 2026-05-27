@@ -10,11 +10,11 @@ const IS_LOCAL_HOST =
 
 const BASE_URL =
   !IS_LOCAL_HOST && ENV_BACKEND_URL?.includes("localhost")
-    ? "https://dojodynamic222.onrender.com/api"
+    ? "https://api.amaasa.com/api"
     : ENV_BACKEND_URL ||
       (IS_LOCAL_HOST
         ? "http://localhost:4001/api"
-        : "https://dojodynamic222.onrender.com/api");
+        : "https://api.amaasa.com/api");
 
 export default function Login() {
   const [mobile, setMobile] = useState("");
