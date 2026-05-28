@@ -98,8 +98,8 @@ app.use("/api/students", studentRoutes);
 app.use("/api/auth", authRoutes);
 
 // env variables
-const PORT = process.env.PORT || 4001;
-const URI = process.env.MONGODB_URI;
+const PORT = process.env.PORT || 5000;
+const URI = process.env.MONGO_URI;
 
 // DB connection
 const connectDB = async () => {
