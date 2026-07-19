@@ -3,6 +3,9 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 
+// result adding
+import resultRoutes from "./routes/result.js";
+
 // new added 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -78,6 +81,9 @@ app.use("/api/belts", beltRoutes);
 app.use("/api/competitions", competitionRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/admin", adminRoutes);
+
+// result adding
+app.use("/api/result",resultRoutes);
 
 
 // routes

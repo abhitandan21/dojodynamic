@@ -19,6 +19,7 @@ const studentLinks = [
   { to: "/competition", label: "Competition Details" },
   { to: "/lathi", label: "Lathi" },
   { to: "/nunchaku", label: "Nunchaku" },
+   { to: "/result", label: "Result" }, 
   { to: "/help", label: "Help Desk" },
 ];
 

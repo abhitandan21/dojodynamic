@@ -1,4 +1,4 @@
-import { Toaster } from "@/components/ui/toaster"; 
+import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -35,6 +35,12 @@ import HelpDesk from "./pages/HelpDesk";
 import CompetitionDetails from "./pages/CompetitionDetails";
 import Courses from "./pages/Courses";
 
+// result adding
+
+import ResultSessions from "./pages/ResultSessionS";
+import ResultSearch from "./pages/ResultSearch";
+import ResultView from "./pages/ResultView";
+
 
 // import helpdesk
 
@@ -62,7 +68,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/register" element={<Signup />} />
-          
+
 
           {/* student dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
@@ -88,8 +94,25 @@ const App = () => (
           <Route path="/lathi" element={<Lathi />} />
           <Route path="/nunchaku" element={<Nunchaku />} />
           <Route path="/help" element={<HelpDesk />} />
-           <Route path="/competition/:id" element={<CompetitionDetails />} />
-           <Route path="/courses" element={<Courses />} />
+          <Route path="/competition/:id" element={<CompetitionDetails />} />
+          <Route path="/courses" element={<Courses />} />
+
+          {/* result adding */}
+
+          <Route
+            path="/result"
+            element={<ResultSessions />}
+          />
+
+          <Route
+            path="/result/:session"
+            element={<ResultSearch />}
+          />
+
+          <Route
+            path="/result-view/:session"
+            element={<ResultView />}
+          />
 
 
           {/* 404 */}
