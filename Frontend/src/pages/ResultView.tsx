@@ -13,6 +13,7 @@ import generateResultPdf
 
 const API =
     "http://localhost:4001/api";
+    "https://api.amaasa.com";
 
 // deploy ke time
 // const API =

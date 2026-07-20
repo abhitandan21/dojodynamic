@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 const API =
 "http://localhost:4001/api";
+"https://api.amaasa.com";
 
 const ResultSessions = () => {
 
