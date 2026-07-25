@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const API =
-"http://localhost:4001/api";
-"https://api.amaasa.com";
+
+"https://api.amaasa.com/api";
 
 const ResultSessions = () => {
 

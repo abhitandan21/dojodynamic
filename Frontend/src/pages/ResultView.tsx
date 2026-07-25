@@ -12,8 +12,8 @@ import generateResultPdf
     from "../utils/generateResultPdf";
 
 const API =
-    "http://localhost:4001/api";
-    "https://api.amaasa.com";
+   
+    "https://api.amaasa.com/api";
 
 // deploy ke time
 // const API =
