@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    // ==========================================
+    // BASIC DETAILS
+    // ==========================================
+
     name: {
       type: String,
       required: true,
@@ -53,13 +57,56 @@ const userSchema = new mongoose.Schema(
       default: ""
     },
 
+    // ==========================================
+    // USER ROLE
+    // ==========================================
+
     role: {
       type: String,
       enum: ["student", "admin"],
       default: "student"
+    },
+
+    // ==========================================
+    // STUDENT STATUS
+    // ==========================================
+
+    status: {
+      type: String,
+      enum: [
+        "Active",
+        "Inactive",
+        "Dropped",
+        "Completed"
+      ],
+      default: "Active"
+    },
+
+    // ==========================================
+    // STATUS DETAILS
+    // ==========================================
+
+    joinedDate: {
+      type: String,
+      default: ""
+    },
+
+    inactiveFrom: {
+      type: String,
+      default: ""
+    },
+
+    inactiveReason: {
+      type: String,
+      default: ""
     }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
-export default mongoose.model("User", userSchema);
+export default mongoose.model(
+  "User",
+  userSchema
+);

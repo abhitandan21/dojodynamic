@@ -6,6 +6,9 @@ import cors from "cors";
 // result adding
 import resultRoutes from "./routes/result.js";
 
+// adding attendence 
+import attendanceRoutes from "./routes/attendanceRoutes.js";
+
 // new added 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -85,12 +88,15 @@ app.use("/api/admin", adminRoutes);
 // result adding
 app.use("/api/result",resultRoutes);
 
+// adding attendence 
+app.use("/api/attendance", attendanceRoutes);
+
 
 // routes
 app.use("/api/blogs", blogRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/certificates", certificateRoutes);
-app.use("/api/admin", adminRoutes);
+//app.use("/api/admin", adminRoutes);
 app.use("/api/form", formRoutes);
 
 // enquiry routes 
@@ -130,27 +136,9 @@ app.get("/", (req, res) => {
 // ✅ STUDENT CORNER ROUTES
 // =========================
 
-// students
-app.get("/api/students", async (req, res) => {
-  try {
-    const data = await Student.find();
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.get("/api/students/:id", async (req, res) => {
-  try {
-    const data = await Student.findById(req.params.id);
-    res.json(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // competition
-app.get("/api/competition", async (req, res) => {
+ app.get("/api/competition", async (req, res) => {
   try {
     const data = await Competition.find();
     res.json(data);

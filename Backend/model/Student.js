@@ -2,6 +2,10 @@ import mongoose from "mongoose";
 
 const studentSchema = new mongoose.Schema(
   {
+    // ==========================================
+    // BASIC DETAILS
+    // ==========================================
+
     name: {
       type: String,
       required: true,
@@ -53,6 +57,10 @@ const studentSchema = new mongoose.Schema(
       default: ""
     },
 
+    // ==========================================
+    // KARATE DETAILS
+    // ==========================================
+
     currentBelt: {
       type: String,
       default: ""
@@ -66,9 +74,48 @@ const studentSchema = new mongoose.Schema(
     date: {
       type: String,
       default: ""
+    },
+
+    // ==========================================
+    // STUDENT STATUS
+    // ==========================================
+
+    status: {
+      type: String,
+      enum: [
+        "Active",
+        "Inactive",
+        "Dropped",
+        "Completed"
+      ],
+      default: "Active"
+    },
+
+    // ==========================================
+    // STATUS DETAILS
+    // ==========================================
+
+    joinedDate: {
+      type: String,
+      default: ""
+    },
+
+    inactiveFrom: {
+      type: String,
+      default: ""
+    },
+
+    inactiveReason: {
+      type: String,
+      default: ""
     }
   },
-  { timestamps: true }
+  {
+    timestamps: true
+  }
 );
 
-export default mongoose.model("Student", studentSchema);
+export default mongoose.model(
+  "Student",
+  studentSchema
+);

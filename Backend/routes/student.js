@@ -5,8 +5,19 @@ const router = express.Router();
 
 // GET all students
 router.get("/", async (req, res) => {
-  const students = await Student.find();
-  res.json(students);
+  try {
+    const students = await Student.find({
+      status: "Active"
+    });
+
+    res.json(students);
+  } catch (error) {
+    console.error("Get Active Students Error:", error);
+
+    res.status(500).json({
+      message: error.message
+    });
+  }
 });
 
 // GET single student
