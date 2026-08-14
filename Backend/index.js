@@ -78,7 +78,19 @@ app.options(/.*/, cors(corsOptions));
 app.use(express.json());
 
 // new added 
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+//app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+// ==========================================
+// PERMANENT UPLOADS DIRECTORY
+// ==========================================
+
+const uploadDir =
+  process.env.UPLOAD_DIR ||
+  path.join(__dirname, "uploads");
+
+app.use("/uploads", express.static(uploadDir));
+
+console.log("Serving uploads from:", uploadDir);
 
 app.use("/api/belts", beltRoutes);
 app.use("/api/competitions", competitionRoutes);
