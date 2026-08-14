@@ -1,45 +1,104 @@
 // Backend/middleware/upload.js
+
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 
-const uploadDir = "uploads";
+// ==========================================
+// CURRENT FILE DIRECTORY
+// ==========================================
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// ==========================================
+// UPLOAD DIRECTORY
+// Backend/uploads
+// ==========================================
+
+const uploadDir = path.join(
+  __dirname,
+  "..",
+  "uploads"
+);
+
+// ==========================================
+// CREATE UPLOAD DIRECTORY IF NOT EXISTS
+// ==========================================
 
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
+  fs.mkdirSync(uploadDir, {
+    recursive: true,
+  });
 }
+
+// ==========================================
+// MULTER STORAGE
+// ==========================================
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadDir);
   },
+
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    cb(
+      null,
+      Date.now() +
+        "-" +
+        file.originalname
+    );
   },
 });
 
+// ==========================================
+// FILE FILTER
+// ==========================================
+
 const fileFilter = (req, file, cb) => {
-  const allowedExt = /jpeg|jpg|png|pdf/;
-  const extName = allowedExt.test(path.extname(file.originalname).toLowerCase());
+  const allowedExt =
+    /jpeg|jpg|png|pdf/;
+
+  const extName =
+    allowedExt.test(
+      path
+        .extname(file.originalname)
+        .toLowerCase()
+    );
 
   const mimeType =
-    file.mimetype === "application/pdf" ||
-    file.mimetype === "image/jpeg" ||
-    file.mimetype === "image/jpg" ||
-    file.mimetype === "image/png";
+    file.mimetype ===
+      "application/pdf" ||
+    file.mimetype ===
+      "image/jpeg" ||
+    file.mimetype ===
+      "image/jpg" ||
+    file.mimetype ===
+      "image/png";
 
   if (extName && mimeType) {
     cb(null, true);
   } else {
-    cb(new Error("Sirf PDF, JPG, JPEG, PNG file allowed hai"));
+    cb(
+      new Error(
+        "Sirf PDF, JPG, JPEG, PNG file allowed hai"
+      )
+    );
   }
 };
 
+// ==========================================
+// MULTER
+// ==========================================
+
 const upload = multer({
   storage,
+
   limits: {
     fileSize: 5 * 1024 * 1024,
   },
+
   fileFilter,
 });
 
