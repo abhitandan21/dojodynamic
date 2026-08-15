@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const API_URL = "https://api.amaasa.com/api";
-const BASE_URL = "https://api.amaasa.com";
+//const API_URL = "https://api.amaasa.com/api";
+//const BASE_URL = "https://api.amaasa.com";
+const API_URL = "http://localhost:4001/api";
+const BASE_URL = "http://localhost:4001";
 
 type User = {
   _id?: string;
@@ -77,6 +79,8 @@ const Dashboard = () => {
     file: null,
   });
 
+  const [isAddingBelt, setIsAddingBelt] = useState(false);
+
   const [compData, setCompData] = useState<any[]>([]);
   const [compForm, setCompForm] = useState<CompForm>({
     name: "",
@@ -87,6 +91,9 @@ const Dashboard = () => {
 
   const [beltError, setBeltError] = useState("");
   const [compError, setCompError] = useState("");
+
+  const [beltReuploadingId, setBeltReuploadingId] = useState<string | null>(null);
+  const [beltReuploadError, setBeltReuploadError] = useState("");
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -163,48 +170,177 @@ const Dashboard = () => {
     });
   };
 
-  const addBelt = async () => {
-    const fileError = validateFile(beltForm.file);
+ const addBelt = async () => {
+  // ========================================
+  // PREVENT DOUBLE / MULTIPLE CLICK
+  // ========================================
 
-    if (!beltForm.beltName || !beltForm.certNo || fileError) {
-      setBeltError(fileError || "Belt name aur certificate number required hai.");
+  if (isAddingBelt) {
+    return;
+  }
+
+  const fileError = validateFile(beltForm.file);
+
+  if (!beltForm.beltName || !beltForm.certNo || fileError) {
+    setBeltError(
+      fileError ||
+        "Belt name aur certificate number required hai."
+    );
+    return;
+  }
+
+  try {
+    // Lock immediately
+    setIsAddingBelt(true);
+
+    setBeltError(
+      "Uploading certificate... Please wait."
+    );
+
+    const formData = new FormData();
+
+    formData.append(
+      "studentId",
+      user?._id || ""
+    );
+
+    formData.append(
+      "beltName",
+      beltForm.beltName
+    );
+
+    formData.append(
+      "certNo",
+      beltForm.certNo
+    );
+
+    if (beltForm.file) {
+      formData.append(
+        "file",
+        beltForm.file
+      );
+    }
+
+    const res = await fetch(
+      `${API_URL}/belts`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const responseData =
+      await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(
+        responseData?.message ||
+          "Belt details save nahi ho paya."
+      );
+    }
+
+    const savedBelt =
+      responseData;
+
+    const newBelt =
+      savedBelt.data ||
+      savedBelt.belt ||
+      savedBelt;
+
+    setBeltData([
+      ...beltData,
+      newBelt,
+    ]);
+
+    setBeltForm({
+      beltName: "",
+      certNo: "",
+      file: null,
+    });
+
+    setBeltError("");
+
+    if (user?._id) {
+      await fetchStudentData(
+        user._id
+      );
+    }
+
+  } catch (error) {
+
+    setBeltError(
+      error instanceof Error
+        ? error.message
+        : "Belt details save nahi ho paya."
+    );
+
+  } finally {
+
+    // Unlock after request finishes
+    setIsAddingBelt(false);
+  }
+};
+
+
+  const handleBeltReupload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    beltId: string
+  ) => {
+    const file = e.target.files?.[0];
+
+    // File select nahi hui
+    if (!file) {
+      return;
+    }
+
+    const error = validateFile(file);
+
+    if (error) {
+      setBeltReuploadError(error);
+      e.target.value = "";
       return;
     }
 
     try {
+      setBeltReuploadingId(beltId);
+      setBeltReuploadError("");
+
       const formData = new FormData();
-      formData.append("studentId", user?._id || "");
-      formData.append("beltName", beltForm.beltName);
-      formData.append("certNo", beltForm.certNo);
+      formData.append("file", file);
 
-      if (beltForm.file) {
-        formData.append("file", beltForm.file);
-      }
+      const res = await fetch(
+        `${API_URL}/belts/${beltId}/re-upload`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
 
-      const res = await fetch(`${API_URL}/belts`, {
-        method: "POST",
-        body: formData,
-      });
+      const data = await res.json();
 
       if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData?.message || "Belt details save nahi ho paya.");
+        throw new Error(
+          data?.message ||
+          "Certificate re-upload nahi ho paya."
+        );
       }
 
-      const savedBelt = await res.json();
-      const newBelt = savedBelt.data || savedBelt.belt || savedBelt;
-
-      setBeltData([...beltData, newBelt]);
-      setBeltForm({ beltName: "", certNo: "", file: null });
-      setBeltError("");
-
+      // Fresh data MongoDB se load karo
       if (user?._id) {
-        fetchStudentData(user._id);
+        await fetchStudentData(user._id);
       }
+
     } catch (error) {
-      setBeltError(
-        error instanceof Error ? error.message : "Belt details save nahi ho paya."
+      setBeltReuploadError(
+        error instanceof Error
+          ? error.message
+          : "Certificate re-upload nahi ho paya."
       );
+    } finally {
+      setBeltReuploadingId(null);
+
+      // Same file dobara select karne ki possibility
+      e.target.value = "";
     }
   };
 
@@ -284,6 +420,53 @@ const Dashboard = () => {
         error instanceof Error
           ? error.message
           : "Competition details save nahi ho paya."
+      );
+    }
+  };
+
+  const reuploadCompetition = async (
+    achievementId: string,
+    file: File
+  ) => {
+    const fileError = validateFile(file);
+
+    if (fileError) {
+      setCompError(fileError);
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch(
+        `${API_URL}/achievements/${achievementId}/re-upload`,
+        {
+          method: "PUT",
+          body: formData,
+        }
+      );
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(
+          result?.message || "Certificate re-upload nahi ho paya."
+        );
+      }
+
+      setCompError("");
+
+      if (user?._id) {
+        await fetchStudentData(user._id);
+      }
+
+      alert("Certificate re-upload successfully ho gaya. Admin approval ka wait karein.");
+    } catch (error) {
+      setCompError(
+        error instanceof Error
+          ? error.message
+          : "Certificate re-upload nahi ho paya."
       );
     }
   };
@@ -494,9 +677,10 @@ const Dashboard = () => {
 
                 <button
                   onClick={addBelt}
-                  className="bg-blue-500 text-white p-2 rounded"
+                  disabled={isAddingBelt}
+                  className="bg-blue-500 text-white p-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Add
+                  {isAddingBelt ? "Uploading..." : "Add Belt"}
                 </button>
               </div>
 
@@ -530,8 +714,8 @@ const Dashboard = () => {
                             b.status === "approved"
                               ? "bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold"
                               : b.status === "rejected"
-                              ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
-                              : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
+                                ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
+                                : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
                           }
                         >
                           {b.status || "pending"}
@@ -543,14 +727,32 @@ const Dashboard = () => {
                             href={getFileLink(b)}
                             target="_blank"
                             rel="noreferrer"
-                            className="bg-blue-500 text-white px-3 py-1 rounded"
+                            className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
                           >
                             View
                           </a>
                         ) : b.status === "rejected" ? (
-                          <span className="text-red-600 font-semibold">
-                            Re-upload required
-                          </span>
+                          <label
+                            className={
+                              beltReuploadingId === b._id
+                                ? "bg-gray-400 text-white px-3 py-1 rounded cursor-not-allowed"
+                                : "bg-orange-500 text-white px-3 py-1 rounded cursor-pointer"
+                            }
+                          >
+                            {beltReuploadingId === b._id
+                              ? "Uploading..."
+                              : "Re-upload"}
+
+                            <input
+                              type="file"
+                              accept=".pdf,.jpg,.jpeg"
+                              className="hidden"
+                              disabled={beltReuploadingId === b._id}
+                              onChange={(e) =>
+                                handleBeltReupload(e, b._id)
+                              }
+                            />
+                          </label>
                         ) : (
                           <span className="text-yellow-600 font-semibold">
                             Waiting for approval
@@ -570,6 +772,11 @@ const Dashboard = () => {
 
               {compError && (
                 <p className="text-red-600 mb-3 font-semibold">{compError}</p>
+              )}
+              {beltError && (
+                <p className="text-red-600 mb-3 font-semibold">
+                  {beltError}
+                </p>
               )}
 
               <div className="grid grid-cols-5 gap-4 mb-4">
@@ -653,8 +860,8 @@ const Dashboard = () => {
                             c.status === "approved"
                               ? "bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold"
                               : c.status === "rejected"
-                              ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
-                              : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
+                                ? "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold"
+                                : "bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-xs font-semibold"
                           }
                         >
                           {c.status || "pending"}
@@ -671,14 +878,29 @@ const Dashboard = () => {
                             View
                           </a>
                         ) : c.status === "rejected" ? (
-                          <span className="text-red-600 font-semibold">
-                            Re-upload required
-                          </span>
-                        ) : (
-                          <span className="text-yellow-600 font-semibold">
-                            Waiting for approval
-                          </span>
-                        )}
+                          <label className="bg-red-500 text-white px-3 py-1 rounded cursor-pointer">
+                            Re-upload
+                            <input
+                              type="file"
+                              accept=".pdf,.jpg,.jpeg"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+
+                                if (!file) return;
+
+                                reuploadCompetition(c._id, file);
+
+                                e.target.value = "";
+                              }}
+                            />
+                          </label>
+                        )
+                          : (
+                            <span className="text-yellow-600 font-semibold">
+                              Waiting for approval
+                            </span>
+                          )}
                       </td>
                     </tr>
                   ))}

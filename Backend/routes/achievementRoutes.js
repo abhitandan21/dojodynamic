@@ -68,4 +68,112 @@ router.get("/student/:studentId", async (req, res) => {
   }
 });
 
+
+/* ==========================================
+   ACHIEVEMENT CERTIFICATE RE-UPLOAD
+   PUT /api/achievements/:id/re-upload
+   ========================================== */
+
+router.put(
+  "/:id/re-upload",
+  (req, res) => {
+    upload.single("file")(req, res, async (error) => {
+      try {
+        // ========================================
+        // MULTER ERROR
+        // ========================================
+
+        if (error instanceof multer.MulterError) {
+          if (error.code === "LIMIT_FILE_SIZE") {
+            return res.status(400).json({
+              message:
+                "File 3MB se jyada nahi honi chahiye",
+            });
+          }
+
+          return res.status(400).json({
+            message: error.message,
+          });
+        }
+
+        // ========================================
+        // OTHER UPLOAD ERROR
+        // ========================================
+
+        if (error) {
+          return res.status(400).json({
+            message: error.message,
+          });
+        }
+
+        // ========================================
+        // FILE REQUIRED
+        // ========================================
+
+        if (!req.file) {
+          return res.status(400).json({
+            message:
+              "New certificate file required hai",
+          });
+        }
+
+        // ========================================
+        // FIND EXISTING ACHIEVEMENT
+        // ========================================
+
+        const existingAchievement =
+          await Achievement.findById(
+            req.params.id
+          );
+
+        if (!existingAchievement) {
+          return res.status(404).json({
+            message:
+              "Competition certificate record not found",
+          });
+        }
+
+        // ========================================
+        // UPDATE ONLY FILE + STATUS
+        // ========================================
+
+        existingAchievement.fileUrl =
+          `/uploads/${req.file.filename}`;
+
+        existingAchievement.status =
+          "pending";
+
+        await existingAchievement.save();
+
+        // ========================================
+        // SUCCESS
+        // ========================================
+
+        res.json({
+          success: true,
+
+          message:
+            "Certificate re-uploaded successfully. Waiting for admin approval.",
+
+          achievement:
+            existingAchievement,
+        });
+
+      } catch (err) {
+        console.error(
+          "Achievement Certificate Re-upload Error:",
+          err
+        );
+
+        res.status(500).json({
+          message: err.message,
+        });
+      }
+    });
+  }
+);
+
+
+
+
 export default router;

@@ -3,8 +3,9 @@ import { useParams } from "react-router-dom";
 import jsPDF from "jspdf";
 
 //const API_URL = "https://api.amaasa.com/api";
-const BACKEND_URL = "https://api.amaasa.com";
+//const BACKEND_URL = "https://api.amaasa.com";
 const API_URL = "http://localhost:4001/api";
+const BACKEND_URL = "http://localhost:4001";
 
 type StudentStatus =
   | "Active"

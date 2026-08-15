@@ -6,25 +6,21 @@ import cors from "cors";
 // result adding
 import resultRoutes from "./routes/result.js";
 
-// adding attendence 
+// adding attendence
 import attendanceRoutes from "./routes/attendanceRoutes.js";
 
-// new added 
+// new added
 import path from "path";
 import { fileURLToPath } from "url";
 import beltRoutes from "./routes/beltRoutes.js";
 import competitionRoutes from "./routes/competitionRoutes.js";
 import achievementRoutes from "./routes/achievementRoutes.js";
 
-
-
 // ✅ models import (VERY IMPORTANT)
 import Student from "./model/Student.js";
 import Competition from "./model/Competition.js";
 import Lathi from "./model/Lathi.js";
 import Nunchaku from "./model/Nunchaku.js";
-
-
 
 // routes import
 import authRoutes from "./routes/authRoutes.js";
@@ -33,19 +29,17 @@ import adminRoutes from "./routes/adminRoutes.js";
 import formRoutes from "./routes/formRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 
-// enquiry import 
+// enquiry import
 import enquiryRoutes from "./routes/enquiryRoutes.js";
 
-// students details 
+// students details
 import studentRoutes from "./routes/student.js";
 
-
-
-
 dotenv.config();
+
 const app = express();
 
-// new added 
+// new added
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -77,9 +71,6 @@ app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 app.use(express.json());
 
-// new added 
-//app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
 // ==========================================
 // PERMANENT UPLOADS DIRECTORY
 // ==========================================
@@ -92,33 +83,31 @@ app.use("/uploads", express.static(uploadDir));
 
 console.log("Serving uploads from:", uploadDir);
 
+// API routes
 app.use("/api/belts", beltRoutes);
 app.use("/api/competitions", competitionRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/admin", adminRoutes);
 
 // result adding
-app.use("/api/result",resultRoutes);
+app.use("/api/result", resultRoutes);
 
-// adding attendence 
+// adding attendance
 app.use("/api/attendance", attendanceRoutes);
-
 
 // routes
 app.use("/api/blogs", blogRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/certificates", certificateRoutes);
-//app.use("/api/admin", adminRoutes);
 app.use("/api/form", formRoutes);
 
-// enquiry routes 
+// enquiry routes
 app.use("/api/enquiries", enquiryRoutes);
 
-// students detsila
+// students details
 app.use("/api/students", studentRoutes);
 
-
-//user login
+// user login
 app.use("/api/auth", authRoutes);
 
 // env variables
@@ -138,19 +127,12 @@ const connectDB = async () => {
 
 connectDB();
 
-// test route
-app.get("/", (req, res) => {
-  res.send("API is running 🚀");
-});
-
-
 // =========================
 // ✅ STUDENT CORNER ROUTES
 // =========================
 
-
 // competition
- app.get("/api/competition", async (req, res) => {
+app.get("/api/competition", async (req, res) => {
   try {
     const data = await Competition.find();
     res.json(data);
@@ -188,11 +170,7 @@ app.get("/api/nunchaku", async (req, res) => {
   }
 });
 
-
 // server start
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-
-
