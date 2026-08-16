@@ -28,6 +28,7 @@ type CompForm = {
   name: string;
   kata: string;
   kumite: string;
+  certNo: string;
   file: File | null;
 };
 
@@ -80,12 +81,14 @@ const Dashboard = () => {
   });
 
   const [isAddingBelt, setIsAddingBelt] = useState(false);
+  const [isAddingCompetition, setIsAddingCompetition] = useState(false);
 
   const [compData, setCompData] = useState<any[]>([]);
   const [compForm, setCompForm] = useState<CompForm>({
     name: "",
     kata: "",
     kumite: "",
+    certNo: "",
     file: null,
   });
 
@@ -170,116 +173,116 @@ const Dashboard = () => {
     });
   };
 
- const addBelt = async () => {
-  // ========================================
-  // PREVENT DOUBLE / MULTIPLE CLICK
-  // ========================================
+  const addBelt = async () => {
+    // ========================================
+    // PREVENT DOUBLE / MULTIPLE CLICK
+    // ========================================
 
-  if (isAddingBelt) {
-    return;
-  }
+    if (isAddingBelt) {
+      return;
+    }
 
-  const fileError = validateFile(beltForm.file);
+    const fileError = validateFile(beltForm.file);
 
-  if (!beltForm.beltName || !beltForm.certNo || fileError) {
-    setBeltError(
-      fileError ||
+    if (!beltForm.beltName || !beltForm.certNo || fileError) {
+      setBeltError(
+        fileError ||
         "Belt name aur certificate number required hai."
-    );
-    return;
-  }
+      );
+      return;
+    }
 
-  try {
-    // Lock immediately
-    setIsAddingBelt(true);
+    try {
+      // Lock immediately
+      setIsAddingBelt(true);
 
-    setBeltError(
-      "Uploading certificate... Please wait."
-    );
+      setBeltError(
+        "Uploading certificate... Please wait."
+      );
 
-    const formData = new FormData();
+      const formData = new FormData();
 
-    formData.append(
-      "studentId",
-      user?._id || ""
-    );
-
-    formData.append(
-      "beltName",
-      beltForm.beltName
-    );
-
-    formData.append(
-      "certNo",
-      beltForm.certNo
-    );
-
-    if (beltForm.file) {
       formData.append(
-        "file",
-        beltForm.file
+        "studentId",
+        user?._id || ""
       );
-    }
 
-    const res = await fetch(
-      `${API_URL}/belts`,
-      {
-        method: "POST",
-        body: formData,
+      formData.append(
+        "beltName",
+        beltForm.beltName
+      );
+
+      formData.append(
+        "certNo",
+        beltForm.certNo
+      );
+
+      if (beltForm.file) {
+        formData.append(
+          "file",
+          beltForm.file
+        );
       }
-    );
 
-    const responseData =
-      await res.json().catch(() => ({}));
+      const res = await fetch(
+        `${API_URL}/belts`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-    if (!res.ok) {
-      throw new Error(
-        responseData?.message ||
+      const responseData =
+        await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(
+          responseData?.message ||
           "Belt details save nahi ho paya."
+        );
+      }
+
+      const savedBelt =
+        responseData;
+
+      const newBelt =
+        savedBelt.data ||
+        savedBelt.belt ||
+        savedBelt;
+
+      setBeltData([
+        ...beltData,
+        newBelt,
+      ]);
+
+      setBeltForm({
+        beltName: "",
+        certNo: "",
+        file: null,
+      });
+
+      setBeltError("");
+
+      if (user?._id) {
+        await fetchStudentData(
+          user._id
+        );
+      }
+
+    } catch (error) {
+
+      setBeltError(
+        error instanceof Error
+          ? error.message
+          : "Belt details save nahi ho paya."
       );
+
+    } finally {
+
+      // Unlock after request finishes
+      setIsAddingBelt(false);
     }
-
-    const savedBelt =
-      responseData;
-
-    const newBelt =
-      savedBelt.data ||
-      savedBelt.belt ||
-      savedBelt;
-
-    setBeltData([
-      ...beltData,
-      newBelt,
-    ]);
-
-    setBeltForm({
-      beltName: "",
-      certNo: "",
-      file: null,
-    });
-
-    setBeltError("");
-
-    if (user?._id) {
-      await fetchStudentData(
-        user._id
-      );
-    }
-
-  } catch (error) {
-
-    setBeltError(
-      error instanceof Error
-        ? error.message
-        : "Belt details save nahi ho paya."
-    );
-
-  } finally {
-
-    // Unlock after request finishes
-    setIsAddingBelt(false);
-  }
-};
+  };
 
 
   const handleBeltReupload = async (
@@ -371,58 +374,138 @@ const Dashboard = () => {
   };
 
   const addCompetition = async () => {
-    const fileError = validateFile(compForm.file);
+  // ========================================
+  // PREVENT DOUBLE / MULTIPLE CLICK
+  // ========================================
 
-    if (!compForm.name || fileError) {
-      setCompError(fileError || "Competition name required hai.");
-      return;
-    }
+  if (isAddingCompetition) {
+    return;
+  }
 
-    try {
-      const formData = new FormData();
-      formData.append("studentId", user?._id || "");
-      formData.append("name", compForm.name);
-      formData.append("kata", compForm.kata);
-      formData.append("kumite", compForm.kumite);
+  const fileError = validateFile(compForm.file);
 
-      if (compForm.file) {
-        formData.append("file", compForm.file);
-      }
+  if (!compForm.name || fileError) {
+    setCompError(
+      fileError ||
+        "Competition name aur certificate number required hai."
+    );
+    return;
+  }
 
-      const res = await fetch(`${API_URL}/achievements/competition`, {
-        method: "POST",
-        body: formData,
-      });
+  try {
+    // ========================================
+    // LOCK BUTTON IMMEDIATELY
+    // ========================================
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-          errorData?.message || "Competition details save nahi ho paya."
-        );
-      }
+    setIsAddingCompetition(true);
 
-      const savedCompetition = await res.json();
-      const newCompetition =
-        savedCompetition.data ||
-        savedCompetition.achievement ||
-        savedCompetition.competition ||
-        savedCompetition;
+    setCompError(
+      "Uploading certificate... Please wait."
+    );
 
-      setCompData([...compData, newCompetition]);
-      setCompForm({ name: "", kata: "", kumite: "", file: null });
-      setCompError("");
+    const formData = new FormData();
 
-      if (user?._id) {
-        fetchStudentData(user._id);
-      }
-    } catch (error) {
-      setCompError(
-        error instanceof Error
-          ? error.message
-          : "Competition details save nahi ho paya."
+    formData.append(
+      "studentId",
+      user?._id || ""
+    );
+
+    formData.append(
+      "name",
+      compForm.name
+    );
+
+    formData.append(
+      "kata",
+      compForm.kata
+    );
+
+    formData.append(
+      "kumite",
+      compForm.kumite
+    );
+
+    
+    // ========================================
+    // FILE
+    // ========================================
+
+    if (compForm.file) {
+      formData.append(
+        "file",
+        compForm.file
       );
     }
-  };
+
+    const res = await fetch(
+      `${API_URL}/achievements/competition`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const responseData =
+      await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(
+        responseData?.message ||
+          "Competition details save nahi ho paya."
+      );
+    }
+
+    const savedCompetition =
+      responseData;
+
+    const newCompetition =
+      savedCompetition.data ||
+      savedCompetition.achievement ||
+      savedCompetition.competition ||
+      savedCompetition;
+
+    setCompData([
+      ...compData,
+      newCompetition,
+    ]);
+
+    // ========================================
+    // RESET FORM
+    // ========================================
+
+    setCompForm({
+      name: "",
+      kata: "",
+      kumite: "",
+      certNo: "",
+      file: null,
+    });
+
+    setCompError("");
+
+    if (user?._id) {
+      await fetchStudentData(
+        user._id
+      );
+    }
+
+  } catch (error) {
+
+    setCompError(
+      error instanceof Error
+        ? error.message
+        : "Competition details save nahi ho paya."
+    );
+
+  } finally {
+
+    // ========================================
+    // UNLOCK BUTTON
+    // ========================================
+
+    setIsAddingCompetition(false);
+  }
+};
 
   const reuploadCompetition = async (
     achievementId: string,
@@ -822,9 +905,10 @@ const Dashboard = () => {
 
                 <button
                   onClick={addCompetition}
-                  className="bg-green-500 text-white p-2 rounded"
+                  disabled={isAddingCompetition}
+                  className="bg-blue-500 text-white p-2 rounded disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Add
+                  {isAddingCompetition ? "Uploading..." : "Add Competition"}
                 </button>
               </div>
 
