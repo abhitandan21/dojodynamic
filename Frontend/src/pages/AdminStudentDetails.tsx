@@ -254,6 +254,183 @@ const AdminStudentDetails = () => {
     };
 
   // ==========================================
+  // EDIT / DELETE CERTIFICATE
+  // ==========================================
+
+  const [editType, setEditType] =
+    useState<"belt" | "achievement" | null>(null);
+
+  const [editingCertificate, setEditingCertificate] =
+    useState<any>(null);
+
+  const [editBeltName, setEditBeltName] =
+    useState("");
+
+  const [editCertNo, setEditCertNo] =
+    useState("");
+
+  const [editTitle, setEditTitle] =
+    useState("");
+
+  const [editKata, setEditKata] =
+    useState("");
+
+  const [editKumite, setEditKumite] =
+    useState("");
+
+  const [editFile, setEditFile] =
+    useState<File | null>(null);
+
+  const [savingEdit, setSavingEdit] =
+    useState(false);
+
+  const openBeltEdit = (belt: any) => {
+    setEditType("belt");
+    setEditingCertificate(belt);
+    setEditBeltName(belt.beltName || "");
+    setEditCertNo(belt.certNo || "");
+    setEditTitle("");
+    setEditKata("");
+    setEditKumite("");
+    setEditFile(null);
+  };
+
+  const openAchievementEdit = (item: any) => {
+    setEditType("achievement");
+    setEditingCertificate(item);
+    setEditBeltName("");
+    setEditCertNo("");
+    setEditTitle(item.title || "");
+    setEditKata(item.kata || "");
+    setEditKumite(item.kumite || "");
+    setEditFile(null);
+  };
+
+  const closeEditModal = () => {
+    setEditType(null);
+    setEditingCertificate(null);
+    setEditFile(null);
+  };
+
+  const saveEditedCertificate = async () => {
+    if (!editingCertificate || !editType) {
+      return;
+    }
+
+    try {
+      setSavingEdit(true);
+
+      const formData = new FormData();
+
+      if (editType === "belt") {
+        formData.append("beltName", editBeltName.trim());
+        formData.append("certNo", editCertNo.trim());
+      } else {
+        formData.append("title", editTitle.trim());
+        formData.append("kata", editKata.trim());
+        formData.append("kumite", editKumite.trim());
+      }
+
+      if (editFile) {
+        formData.append("file", editFile);
+      }
+
+      const endpoint =
+        editType === "belt"
+          ? `${API_URL}/admin/belts/${editingCertificate._id}`
+          : `${API_URL}/admin/achievements/${editingCertificate._id}`;
+
+      const res = await fetch(endpoint, {
+        method: "PUT",
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(
+          data.message || "Certificate update failed."
+        );
+      }
+
+      alert(
+        data.message ||
+          "Certificate updated successfully."
+      );
+
+      closeEditModal();
+      await fetchStudentDetails();
+    } catch (error) {
+      console.error(
+        "Certificate edit error:",
+        error
+      );
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to update certificate."
+      );
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const deleteCertificate = async (
+    type: "belt" | "achievement",
+    id: string
+  ) => {
+    const certificateName =
+      type === "belt"
+        ? "belt certificate"
+        : "competition certificate";
+
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently delete this ${certificateName}?\\n\\nThis action cannot be undone.`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      const endpoint =
+        type === "belt"
+          ? `${API_URL}/admin/belts/${id}`
+          : `${API_URL}/admin/achievements/${id}`;
+
+      const res = await fetch(endpoint, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(
+          data.message ||
+            "Certificate delete failed."
+        );
+      }
+
+      alert(
+        data.message ||
+          "Certificate deleted successfully."
+      );
+
+      await fetchStudentDetails();
+    } catch (error) {
+      console.error(
+        "Certificate delete error:",
+        error
+      );
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete certificate."
+      );
+    }
+  };
+
+  // ==========================================
   // GENERATE PDF REPORT
   // ==========================================
 
@@ -717,7 +894,7 @@ const AdminStudentDetails = () => {
 
                       <td className="p-3 border">
 
-                        <div className="flex justify-center gap-2">
+                        <div className="flex flex-wrap justify-center gap-2">
 
                           <button
                             onClick={() =>
@@ -741,6 +918,27 @@ const AdminStudentDetails = () => {
                             className="bg-red-500 text-white px-3 py-1 rounded"
                           >
                             Reject
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              openBeltEdit(belt)
+                            }
+                            className="bg-blue-600 text-white px-3 py-1 rounded"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              deleteCertificate(
+                                "belt",
+                                belt._id
+                              )
+                            }
+                            className="bg-gray-900 text-white px-3 py-1 rounded"
+                          >
+                            Delete
                           </button>
 
                         </div>
@@ -875,7 +1073,7 @@ const AdminStudentDetails = () => {
 
                       <td className="p-3 border">
 
-                        <div className="flex justify-center gap-2">
+                        <div className="flex flex-wrap justify-center gap-2">
 
                           <button
                             onClick={() =>
@@ -899,6 +1097,27 @@ const AdminStudentDetails = () => {
                             className="bg-red-500 text-white px-3 py-1 rounded"
                           >
                             Reject
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              openAchievementEdit(item)
+                            }
+                            className="bg-blue-600 text-white px-3 py-1 rounded"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              deleteCertificate(
+                                "achievement",
+                                item._id
+                              )
+                            }
+                            className="bg-gray-900 text-white px-3 py-1 rounded"
+                          >
+                            Delete
                           </button>
 
                         </div>
@@ -933,6 +1152,175 @@ const AdminStudentDetails = () => {
         </div>
 
       </div>
+
+      {/* =====================================
+          EDIT CERTIFICATE MODAL
+      ===================================== */}
+
+      {editType && editingCertificate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white shadow-2xl">
+
+            <div className="flex items-center justify-between border-b p-5">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">
+                  Edit Certificate
+                </h2>
+                <p className="text-sm text-gray-500 mt-1">
+                  Update certificate information or replace the uploaded file.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={closeEditModal}
+                disabled={savingEdit}
+                className="text-2xl text-gray-500 hover:text-gray-900 disabled:opacity-50"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="p-5 space-y-5">
+
+              {editType === "belt" ? (
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Belt Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editBeltName}
+                      onChange={(e) =>
+                        setEditBeltName(e.target.value)
+                      }
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      placeholder="Enter belt name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Certificate No
+                    </label>
+                    <input
+                      type="text"
+                      value={editCertNo}
+                      onChange={(e) =>
+                        setEditCertNo(e.target.value)
+                      }
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      placeholder="Enter certificate number"
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Competition Name
+                    </label>
+                    <input
+                      type="text"
+                      value={editTitle}
+                      onChange={(e) =>
+                        setEditTitle(e.target.value)
+                      }
+                      className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      placeholder="Enter competition name"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Kata
+                      </label>
+                      <input
+                        type="text"
+                        value={editKata}
+                        onChange={(e) =>
+                          setEditKata(e.target.value)
+                        }
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Example: Gold"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Kumite
+                      </label>
+                      <input
+                        type="text"
+                        value={editKumite}
+                        onChange={(e) =>
+                          setEditKumite(e.target.value)
+                        }
+                        className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Example: Silver"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Replace Certificate File (optional)
+                </label>
+
+                <input
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,application/pdf"
+                  onChange={(e) =>
+                    setEditFile(
+                      e.target.files?.[0] || null
+                    )
+                  }
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 text-black bg-white"
+                />
+
+                {editingCertificate.fileUrl && (
+                  <p className="text-xs text-gray-500 mt-2 break-all">
+                    Current file: {editingCertificate.fileUrl}
+                  </p>
+                )}
+
+                {editFile && (
+                  <p className="text-sm text-blue-600 mt-2">
+                    New file selected: {editFile.name}
+                  </p>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-3 pt-2 border-t">
+                <button
+                  type="button"
+                  onClick={closeEditModal}
+                  disabled={savingEdit}
+                  className="px-5 py-3 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 disabled:opacity-50"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  onClick={saveEditedCertificate}
+                  disabled={savingEdit}
+                  className="px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {savingEdit
+                    ? "Saving..."
+                    : "Save Changes"}
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
