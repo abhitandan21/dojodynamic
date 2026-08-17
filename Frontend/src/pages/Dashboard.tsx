@@ -374,138 +374,138 @@ const Dashboard = () => {
   };
 
   const addCompetition = async () => {
-  // ========================================
-  // PREVENT DOUBLE / MULTIPLE CLICK
-  // ========================================
+    // ========================================
+    // PREVENT DOUBLE / MULTIPLE CLICK
+    // ========================================
 
-  if (isAddingCompetition) {
-    return;
-  }
+    if (isAddingCompetition) {
+      return;
+    }
 
-  const fileError = validateFile(compForm.file);
+    const fileError = validateFile(compForm.file);
 
-  if (!compForm.name || fileError) {
-    setCompError(
-      fileError ||
+    if (!compForm.name || fileError) {
+      setCompError(
+        fileError ||
         "Competition name aur certificate number required hai."
-    );
-    return;
-  }
+      );
+      return;
+    }
 
-  try {
-    // ========================================
-    // LOCK BUTTON IMMEDIATELY
-    // ========================================
+    try {
+      // ========================================
+      // LOCK BUTTON IMMEDIATELY
+      // ========================================
 
-    setIsAddingCompetition(true);
+      setIsAddingCompetition(true);
 
-    setCompError(
-      "Uploading certificate... Please wait."
-    );
+      setCompError(
+        "Uploading certificate... Please wait."
+      );
 
-    const formData = new FormData();
+      const formData = new FormData();
 
-    formData.append(
-      "studentId",
-      user?._id || ""
-    );
-
-    formData.append(
-      "name",
-      compForm.name
-    );
-
-    formData.append(
-      "kata",
-      compForm.kata
-    );
-
-    formData.append(
-      "kumite",
-      compForm.kumite
-    );
-
-    
-    // ========================================
-    // FILE
-    // ========================================
-
-    if (compForm.file) {
       formData.append(
-        "file",
-        compForm.file
+        "studentId",
+        user?._id || ""
       );
-    }
 
-    const res = await fetch(
-      `${API_URL}/achievements/competition`,
-      {
-        method: "POST",
-        body: formData,
+      formData.append(
+        "name",
+        compForm.name
+      );
+
+      formData.append(
+        "kata",
+        compForm.kata
+      );
+
+      formData.append(
+        "kumite",
+        compForm.kumite
+      );
+
+
+      // ========================================
+      // FILE
+      // ========================================
+
+      if (compForm.file) {
+        formData.append(
+          "file",
+          compForm.file
+        );
       }
-    );
 
-    const responseData =
-      await res.json().catch(() => ({}));
+      const res = await fetch(
+        `${API_URL}/achievements/competition`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
-    if (!res.ok) {
-      throw new Error(
-        responseData?.message ||
+      const responseData =
+        await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(
+          responseData?.message ||
           "Competition details save nahi ho paya."
+        );
+      }
+
+      const savedCompetition =
+        responseData;
+
+      const newCompetition =
+        savedCompetition.data ||
+        savedCompetition.achievement ||
+        savedCompetition.competition ||
+        savedCompetition;
+
+      setCompData([
+        ...compData,
+        newCompetition,
+      ]);
+
+      // ========================================
+      // RESET FORM
+      // ========================================
+
+      setCompForm({
+        name: "",
+        kata: "",
+        kumite: "",
+        certNo: "",
+        file: null,
+      });
+
+      setCompError("");
+
+      if (user?._id) {
+        await fetchStudentData(
+          user._id
+        );
+      }
+
+    } catch (error) {
+
+      setCompError(
+        error instanceof Error
+          ? error.message
+          : "Competition details save nahi ho paya."
       );
+
+    } finally {
+
+      // ========================================
+      // UNLOCK BUTTON
+      // ========================================
+
+      setIsAddingCompetition(false);
     }
-
-    const savedCompetition =
-      responseData;
-
-    const newCompetition =
-      savedCompetition.data ||
-      savedCompetition.achievement ||
-      savedCompetition.competition ||
-      savedCompetition;
-
-    setCompData([
-      ...compData,
-      newCompetition,
-    ]);
-
-    // ========================================
-    // RESET FORM
-    // ========================================
-
-    setCompForm({
-      name: "",
-      kata: "",
-      kumite: "",
-      certNo: "",
-      file: null,
-    });
-
-    setCompError("");
-
-    if (user?._id) {
-      await fetchStudentData(
-        user._id
-      );
-    }
-
-  } catch (error) {
-
-    setCompError(
-      error instanceof Error
-        ? error.message
-        : "Competition details save nahi ho paya."
-    );
-
-  } finally {
-
-    // ========================================
-    // UNLOCK BUTTON
-    // ========================================
-
-    setIsAddingCompetition(false);
-  }
-};
+  };
 
   const reuploadCompetition = async (
     achievementId: string,
@@ -804,22 +804,49 @@ const Dashboard = () => {
                           {b.status || "pending"}
                         </span>
                       </td>
-                      <td>
+                      <td className="whitespace-nowrap">
                         {b.status === "approved" && getFileLink(b) ? (
-                          <a
-                            href={getFileLink(b)}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="bg-blue-500 text-white px-3 py-1 rounded mr-2"
-                          >
-                            View
-                          </a>
+                          <div className="flex items-center justify-center gap-2">
+                            {/* View */}
+                            <a
+                              href={getFileLink(b)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                            >
+                              View
+                            </a>
+
+                            {/* Re-upload */}
+                            <label
+                              className={
+                                beltReuploadingId === b._id
+                                  ? "bg-gray-400 text-white px-3 py-1 rounded cursor-not-allowed"
+                                  : "bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded cursor-pointer"
+                              }
+                            >
+                              {beltReuploadingId === b._id
+                                ? "Uploading..."
+                                : "Re-upload"}
+
+                              <input
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                className="hidden"
+                                disabled={beltReuploadingId === b._id}
+                                onChange={(e) =>
+                                  handleBeltReupload(e, b._id)
+                                }
+                              />
+                            </label>
+                          </div>
                         ) : b.status === "rejected" ? (
+                          /* Rejected → Re-upload */
                           <label
                             className={
                               beltReuploadingId === b._id
                                 ? "bg-gray-400 text-white px-3 py-1 rounded cursor-not-allowed"
-                                : "bg-orange-500 text-white px-3 py-1 rounded cursor-pointer"
+                                : "bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded cursor-pointer"
                             }
                           >
                             {beltReuploadingId === b._id
@@ -828,7 +855,7 @@ const Dashboard = () => {
 
                             <input
                               type="file"
-                              accept=".pdf,.jpg,.jpeg"
+                              accept=".pdf,.jpg,.jpeg,.png"
                               className="hidden"
                               disabled={beltReuploadingId === b._id}
                               onChange={(e) =>
@@ -837,6 +864,7 @@ const Dashboard = () => {
                             />
                           </label>
                         ) : (
+                          /* Pending */
                           <span className="text-yellow-600 font-semibold">
                             Waiting for approval
                           </span>
@@ -953,20 +981,45 @@ const Dashboard = () => {
                       </td>
                       <td>
                         {c.status === "approved" && getFileLink(c) ? (
-                          <a
-                            href={getFileLink(c)}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="bg-green-500 text-white px-3 py-1 rounded"
-                          >
-                            View
-                          </a>
+                          <div className="flex items-center justify-center gap-2">
+                            {/* View */}
+                            <a
+                              href={getFileLink(c)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                            >
+                              View
+                            </a>
+
+                            {/* Re-upload */}
+                            <label className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1 rounded cursor-pointer">
+                              Re-upload
+
+                              <input
+                                type="file"
+                                accept=".pdf,.jpg,.jpeg,.png"
+                                className="hidden"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+
+                                  if (!file) return;
+
+                                  reuploadCompetition(c._id, file);
+
+                                  e.target.value = "";
+                                }}
+                              />
+                            </label>
+                          </div>
                         ) : c.status === "rejected" ? (
-                          <label className="bg-red-500 text-white px-3 py-1 rounded cursor-pointer">
+                          /* Rejected → Re-upload */
+                          <label className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded cursor-pointer">
                             Re-upload
+
                             <input
                               type="file"
-                              accept=".pdf,.jpg,.jpeg"
+                              accept=".pdf,.jpg,.jpeg,.png"
                               className="hidden"
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
@@ -979,12 +1032,12 @@ const Dashboard = () => {
                               }}
                             />
                           </label>
-                        )
-                          : (
-                            <span className="text-yellow-600 font-semibold">
-                              Waiting for approval
-                            </span>
-                          )}
+                        ) : (
+                          /* Pending */
+                          <span className="text-yellow-600 font-semibold">
+                            Waiting for approval
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}

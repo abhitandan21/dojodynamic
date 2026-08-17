@@ -5,6 +5,7 @@ import multer from "multer";
 import fs from "fs";
 import Achievement from "../model/Achievement.js";
 import upload from "../middleware/upload.js";
+import path from "path";
 
 const router = express.Router();
 
@@ -232,6 +233,8 @@ router.get(
 );
 
 
+
+
 /* ==========================================
    ACHIEVEMENT CERTIFICATE RE-UPLOAD
    PUT /api/achievements/:id/re-upload
@@ -242,9 +245,7 @@ router.put(
   async (req, res) => {
     try {
       // ========================================
-      // FIND EXISTING ACHIEVEMENT FIRST
-      // IMPORTANT:
-      // File upload se pehle status check hoga
+      // FIND EXISTING ACHIEVEMENT
       // ========================================
 
       const existingAchievement =
@@ -260,21 +261,31 @@ router.put(
       }
 
       // ========================================
-      // ONLY REJECTED CERTIFICATE CAN RE-UPLOAD
+      // ONLY APPROVED OR REJECTED CAN RE-UPLOAD
+      // PENDING CANNOT RE-UPLOAD
       // ========================================
 
       if (
         existingAchievement.status !==
-        "rejected"
+          "approved" &&
+        existingAchievement.status !==
+          "rejected"
       ) {
         return res.status(400).json({
           message:
-            "Sirf rejected certificate ko re-upload kiya ja sakta hai.",
+            "Sirf approved ya rejected certificate ko re-upload kiya ja sakta hai.",
         });
       }
 
       // ========================================
-      // NOW ACCEPT FILE
+      // STORE OLD FILE URL
+      // ========================================
+
+      const oldFileUrl =
+        existingAchievement.fileUrl;
+
+      // ========================================
+      // ACCEPT NEW FILE
       // ========================================
 
       upload.single("file")(
@@ -282,9 +293,9 @@ router.put(
         res,
         async (error) => {
           try {
-            // ========================================
+            // ====================================
             // MULTER ERROR
-            // ========================================
+            // ====================================
 
             if (
               error instanceof multer.MulterError
@@ -295,7 +306,7 @@ router.put(
               ) {
                 return res.status(400).json({
                   message:
-                    "File 3MB se jyada nahi honi chahiye",
+                    "File 5MB se jyada nahi honi chahiye",
                 });
               }
 
@@ -304,9 +315,9 @@ router.put(
               });
             }
 
-            // ========================================
+            // ====================================
             // OTHER UPLOAD ERROR
-            // ========================================
+            // ====================================
 
             if (error) {
               return res.status(400).json({
@@ -314,9 +325,9 @@ router.put(
               });
             }
 
-            // ========================================
+            // ====================================
             // FILE REQUIRED
-            // ========================================
+            // ====================================
 
             if (!req.file) {
               return res.status(400).json({
@@ -325,27 +336,78 @@ router.put(
               });
             }
 
-            // ========================================
-            // UPDATE ONLY FILE + STATUS
-            // ========================================
+            // ====================================
+            // NEW FILE URL
+            // ====================================
+
+            const newFileUrl =
+              `/uploads/${req.file.filename}`;
+
+            // ====================================
+            // UPDATE SAME MONGODB RECORD
+            //
+            // _id SAME
+            // studentId SAME
+            // title SAME
+            // kata SAME
+            // kumite SAME
+            // fileUrl NEW
+            // status PENDING
+            // ====================================
 
             existingAchievement.fileUrl =
-              `/uploads/${req.file.filename}`;
+              newFileUrl;
 
             existingAchievement.status =
               "pending";
 
-            // ========================================
-            // REVIEW REMARK
-            // Keep existing review remark
-            // for dashboard compatibility
-            // ========================================
+            // reviewRemark intentionally
+            // unchanged
 
             await existingAchievement.save();
 
-            // ========================================
+            // ====================================
+            // DELETE OLD PHYSICAL FILE
+            // ====================================
+
+            if (
+              oldFileUrl &&
+              oldFileUrl !== newFileUrl
+            ) {
+              try {
+                const oldFileName =
+                  path.basename(
+                    oldFileUrl
+                  );
+
+                const oldFilePath =
+                  path.join(
+                    process.cwd(),
+                    "uploads",
+                    oldFileName
+                  );
+
+                await fs.promises.unlink(
+                  oldFilePath
+                );
+
+                console.log(
+                  "Old competition certificate deleted:",
+                  oldFileName
+                );
+              } catch (deleteError) {
+                // Old file missing hone par
+                // database update fail nahi hoga
+                console.warn(
+                  "Old competition certificate delete warning:",
+                  deleteError.message
+                );
+              }
+            }
+
+            // ====================================
             // SUCCESS
-            // ========================================
+            // ====================================
 
             return res.json({
               success: true,
@@ -362,6 +424,21 @@ router.put(
               "Achievement Certificate Re-upload Error:",
               err
             );
+
+            // If DB update fails,
+            // remove newly uploaded file
+            try {
+              if (req.file?.path) {
+                await fs.promises.unlink(
+                  req.file.path
+                );
+              }
+            } catch (cleanupError) {
+              console.error(
+                "New competition file cleanup error:",
+                cleanupError
+              );
+            }
 
             return res.status(500).json({
               message: err.message,

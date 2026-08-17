@@ -3,6 +3,7 @@ import multer from "multer";
 import fs from "fs";
 import Belt from "../model/Belt.js";
 import upload from "../middleware/upload.js";
+import path from "path";
 
 const router = express.Router();
 
@@ -209,6 +210,8 @@ router.get(
 
 
 
+
+
 /* ==========================================
    BELT CERTIFICATE RE-UPLOAD
    PUT /api/belts/:id/re-upload
@@ -219,9 +222,7 @@ router.put(
   async (req, res) => {
     try {
       // ========================================
-      // FIND EXISTING BELT RECORD FIRST
-      // IMPORTANT:
-      // File upload se pehle status check hoga
+      // FIND EXISTING BELT RECORD
       // ========================================
 
       const existingBelt = await Belt.findById(
@@ -230,103 +231,193 @@ router.put(
 
       if (!existingBelt) {
         return res.status(404).json({
-          message: "Belt certificate record not found",
+          message:
+            "Belt certificate record not found",
         });
       }
 
       // ========================================
-      // ONLY REJECTED CERTIFICATE CAN RE-UPLOAD
+      // ONLY APPROVED OR REJECTED CAN RE-UPLOAD
+      // PENDING CANNOT RE-UPLOAD
       // ========================================
 
-      if (existingBelt.status !== "rejected") {
+      if (
+        existingBelt.status !== "approved" &&
+        existingBelt.status !== "rejected"
+      ) {
         return res.status(400).json({
           message:
-            "Sirf rejected certificate ko re-upload kiya ja sakta hai.",
+            "Sirf approved ya rejected certificate ko re-upload kiya ja sakta hai.",
         });
       }
 
       // ========================================
-      // NOW ACCEPT FILE
+      // STORE OLD FILE PATH
       // ========================================
 
-      upload.single("file")(req, res, async (error) => {
-        try {
-          // ========================================
-          // MULTER ERROR
-          // ========================================
+      const oldFileUrl =
+        existingBelt.fileUrl;
 
-          if (error instanceof multer.MulterError) {
-            if (error.code === "LIMIT_FILE_SIZE") {
+      // ========================================
+      // ACCEPT NEW FILE
+      // ========================================
+
+      upload.single("file")(
+        req,
+        res,
+        async (error) => {
+          try {
+            // ====================================
+            // MULTER ERROR
+            // ====================================
+
+            if (
+              error instanceof multer.MulterError
+            ) {
+              if (
+                error.code ===
+                "LIMIT_FILE_SIZE"
+              ) {
+                return res.status(400).json({
+                  message:
+                    "File 5MB se jyada nahi honi chahiye",
+                });
+              }
+
               return res.status(400).json({
-                message:
-                  "File 3MB se jyada nahi honi chahiye",
+                message: error.message,
               });
             }
 
-            return res.status(400).json({
-              message: error.message,
-            });
-          }
+            // ====================================
+            // OTHER UPLOAD ERROR
+            // ====================================
 
-          // ========================================
-          // OTHER UPLOAD ERROR
-          // ========================================
+            if (error) {
+              return res.status(400).json({
+                message: error.message,
+              });
+            }
 
-          if (error) {
-            return res.status(400).json({
-              message: error.message,
-            });
-          }
+            // ====================================
+            // FILE REQUIRED
+            // ====================================
 
-          // ========================================
-          // FILE REQUIRED
-          // ========================================
+            if (!req.file) {
+              return res.status(400).json({
+                message:
+                  "New certificate file required hai",
+              });
+            }
 
-          if (!req.file) {
-            return res.status(400).json({
+            // ====================================
+            // NEW FILE URL
+            // ====================================
+
+            const newFileUrl =
+              `/uploads/${req.file.filename}`;
+
+            // ====================================
+            // UPDATE SAME MONGODB RECORD
+            //
+            // _id SAME
+            // studentId SAME
+            // beltName SAME
+            // certNo SAME
+            // fileUrl NEW
+            // status PENDING
+            // ====================================
+
+            existingBelt.fileUrl =
+              newFileUrl;
+
+            existingBelt.status =
+              "pending";
+
+            // reviewRemark intentionally
+            // unchanged
+
+            await existingBelt.save();
+
+            // ====================================
+            // DELETE OLD PHYSICAL FILE
+            // ====================================
+
+            if (
+              oldFileUrl &&
+              oldFileUrl !== newFileUrl
+            ) {
+              try {
+                const oldFileName =
+                  path.basename(
+                    oldFileUrl
+                  );
+
+                const oldFilePath =
+                  path.join(
+                    process.cwd(),
+                    "uploads",
+                    oldFileName
+                  );
+
+                await fs.promises.unlink(
+                  oldFilePath
+                );
+
+                console.log(
+                  "Old belt certificate deleted:",
+                  oldFileName
+                );
+              } catch (deleteError) {
+                // Old file missing hone par
+                // database update fail nahi hoga
+                console.warn(
+                  "Old belt certificate delete warning:",
+                  deleteError.message
+                );
+              }
+            }
+
+            // ====================================
+            // SUCCESS
+            // ====================================
+
+            return res.json({
+              success: true,
+
               message:
-                "New certificate file required hai",
+                "Certificate re-uploaded successfully. Waiting for admin approval.",
+
+              belt: existingBelt,
+            });
+
+          } catch (err) {
+            console.error(
+              "Belt Certificate Re-upload Error:",
+              err
+            );
+
+            // If DB update fails,
+            // remove newly uploaded file
+            try {
+              if (req.file?.path) {
+                await fs.promises.unlink(
+                  req.file.path
+                );
+              }
+            } catch (cleanupError) {
+              console.error(
+                "New belt file cleanup error:",
+                cleanupError
+              );
+            }
+
+            return res.status(500).json({
+              message: err.message,
             });
           }
-
-          // ========================================
-          // UPDATE ONLY FILE + STATUS
-          // ========================================
-
-          existingBelt.fileUrl =
-            `/uploads/${req.file.filename}`;
-
-          existingBelt.status = "pending";
-
-          // IMPORTANT:
-          // reviewRemark ko change nahi karna
-          // Existing dashboard compatibility ke liye
-          // reviewRemark untouched rahega.
-
-          await existingBelt.save();
-
-          // ========================================
-          // SUCCESS
-          // ========================================
-
-          return res.json({
-            success: true,
-            message:
-              "Certificate re-uploaded successfully. Waiting for admin approval.",
-            belt: existingBelt,
-          });
-
-        } catch (err) {
-          console.error(
-            "Belt Certificate Re-upload Error:",
-            err
-          );
-
-          return res.status(500).json({
-            message: err.message,
-          });
         }
-      });
+      );
 
     } catch (err) {
       console.error(
@@ -340,5 +431,4 @@ router.put(
     }
   }
 );
-
 export default router;
