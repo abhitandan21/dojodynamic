@@ -7,6 +7,7 @@ import {
   getAttendanceSummary,
   updateAttendanceByDate,
   getAllStudents,
+  getAttendanceReport,
 } from "../controllers/attendanceController.js";
 
 const router = express.Router();
@@ -83,5 +84,9 @@ router.get(
   getAllStudents
 );
 
+router.get(
+  "/report",
+  getAttendanceReport
+);
 
 export default router;

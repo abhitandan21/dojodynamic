@@ -12,6 +12,16 @@ import {
   updateAttendanceByDate,
 } from "./services/attendanceService";
 
+import HolidayManagement from "./component/HolidayManagement";
+
+import {
+  getHolidays,
+} from "./services/calendarService";
+
+import type {
+  Holiday,
+} from "./services/calendarService";
+
 // ==========================================
 // STUDENT TYPE
 // ==========================================
@@ -68,12 +78,78 @@ const AdminAttendance = () => {
     useState(false);
 
   // ==========================================
-  // NEW:
-  // CHECK WHETHER ATTENDANCE IS ALREADY SAVED
+  // ATTENDANCE EXISTS
   // ==========================================
 
   const [attendanceExists, setAttendanceExists] =
     useState(false);
+
+  // ==========================================
+  // HOLIDAY CHECK
+  // ==========================================
+
+  const [holidayForDate, setHolidayForDate] =
+    useState<Holiday | null>(null);
+
+  const [isSunday, setIsSunday] =
+    useState(false);
+
+  // ==========================================
+  // CHECK SELECTED DATE
+  // SUNDAY + SPECIAL HOLIDAY
+  // ==========================================
+
+  const checkHoliday = async (
+    selectedDate: string
+  ) => {
+    try {
+      // ======================================
+      // CHECK SUNDAY
+      // ======================================
+
+      const day =
+        new Date(
+          `${selectedDate}T00:00:00`
+        ).getDay();
+
+      const sunday = day === 0;
+
+      setIsSunday(sunday);
+
+      // ======================================
+      // GET SPECIAL HOLIDAYS
+      // ======================================
+
+      const holidays =
+        await getHolidays();
+
+      const holiday =
+        holidays.find(
+          (item) =>
+            item.date === selectedDate
+        ) || null;
+
+      setHolidayForDate(holiday);
+
+      return {
+        isSunday: sunday,
+        holiday,
+      };
+
+    } catch (error) {
+      console.error(
+        "Holiday Check Error:",
+        error
+      );
+
+      setHolidayForDate(null);
+
+      return {
+        isSunday: false,
+        holiday: null,
+      };
+    }
+  };
 
   // ==========================================
   // LOAD STUDENTS + SAVED ATTENDANCE
@@ -82,6 +158,27 @@ const AdminAttendance = () => {
   const loadStudents = async () => {
     try {
       setLoading(true);
+
+      // ======================================
+      // CHECK SUNDAY / HOLIDAY FIRST
+      // ======================================
+
+      const holidayCheck =
+        await checkHoliday(date);
+
+      // ======================================
+      // HOLIDAY / SUNDAY
+      // NO ATTENDANCE
+      // ======================================
+
+      if (
+        holidayCheck.isSunday ||
+        holidayCheck.holiday
+      ) {
+        setStudents([]);
+        setAttendanceExists(false);
+        return;
+      }
 
       // ======================================
       // STEP 1
@@ -103,7 +200,8 @@ const AdminAttendance = () => {
 
       // ======================================
       // STEP 2
-      // DEFAULT ALL ACTIVE STUDENTS AS PRESENT
+      // DEFAULT ALL ACTIVE STUDENTS
+      // AS PRESENT
       // ======================================
 
       const formattedStudents: Student[] =
@@ -214,6 +312,7 @@ const AdminAttendance = () => {
       alert(
         "Unable to load students."
       );
+
     } finally {
       setLoading(false);
     }
@@ -293,6 +392,7 @@ const AdminAttendance = () => {
           user.username ||
           user.email ||
           "Admin";
+
       } catch {
         markedBy = "Admin";
       }
@@ -308,17 +408,40 @@ const AdminAttendance = () => {
   const handleSaveAttendance =
     async () => {
       try {
+        // ======================================
+        // EXTRA SAFETY CHECK
+        // ======================================
+
+        const holidayCheck =
+          await checkHoliday(date);
+
+        if (
+          holidayCheck.isSunday ||
+          holidayCheck.holiday
+        ) {
+          alert(
+            holidayCheck.isSunday
+              ? "Sunday ko attendance nahi li ja sakti."
+              : `Is date par holiday hai: ${holidayCheck.holiday?.reason}`
+          );
+
+          return;
+        }
+
         if (students.length === 0) {
           alert(
             "No students available."
           );
+
           return;
         }
 
         setSaving(true);
 
         const selectedDate =
-          new Date(date);
+          new Date(
+            `${date}T00:00:00`
+          );
 
         // ======================================
         // ATTENDANCE DATA
@@ -391,6 +514,7 @@ const AdminAttendance = () => {
             ? error.message
             : "Failed to save attendance."
         );
+
       } finally {
         setSaving(false);
       }
@@ -403,17 +527,40 @@ const AdminAttendance = () => {
   const handleUpdateAttendance =
     async () => {
       try {
+        // ======================================
+        // EXTRA SAFETY CHECK
+        // ======================================
+
+        const holidayCheck =
+          await checkHoliday(date);
+
+        if (
+          holidayCheck.isSunday ||
+          holidayCheck.holiday
+        ) {
+          alert(
+            holidayCheck.isSunday
+              ? "Sunday ko attendance update nahi ki ja sakti."
+              : `Is date par holiday hai: ${holidayCheck.holiday?.reason}`
+          );
+
+          return;
+        }
+
         if (students.length === 0) {
           alert(
             "No students available."
           );
+
           return;
         }
 
         setSaving(true);
 
         const selectedDate =
-          new Date(date);
+          new Date(
+            `${date}T00:00:00`
+          );
 
         // ======================================
         // ATTENDANCE DATA
@@ -482,6 +629,7 @@ const AdminAttendance = () => {
             ? error.message
             : "Failed to update attendance."
         );
+
       } finally {
         setSaving(false);
       }
@@ -540,77 +688,134 @@ const AdminAttendance = () => {
         />
 
         {/* ==================================
+            HOLIDAY MANAGEMENT
+        ================================== */}
+
+        <HolidayManagement />
+
+        {/* ==================================
+            HOLIDAY / SUNDAY MESSAGE
+        ================================== */}
+
+        {(isSunday || holidayForDate) && (
+          <div className="mb-6 bg-orange-50 border border-orange-200 rounded-xl p-5">
+
+            <div className="flex items-start gap-3">
+
+              <div className="text-3xl">
+                {isSunday
+                  ? "🔵"
+                  : "🟠"}
+              </div>
+
+              <div>
+
+                <h3 className="text-lg font-bold text-orange-700">
+                  {isSunday
+                    ? "Sunday - Holiday"
+                    : "Class Holiday"}
+                </h3>
+
+                <p className="text-orange-600 mt-1">
+                  {isSunday
+                    ? "Sunday ko automatically holiday maana gaya hai. Is din attendance nahi li ja sakti."
+                    : holidayForDate?.reason}
+                </p>
+
+                <p className="text-sm text-gray-500 mt-2">
+                  Attendance marking is disabled for this date.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+        )}
+
+        {/* ==================================
             SUMMARY
         ================================== */}
 
-        <AttendanceSummary
-          total={totalStudents}
-          present={presentStudents}
-          absent={absentStudents}
-          percentage={
-            attendancePercentage
-          }
-        />
+        {!isSunday &&
+          !holidayForDate && (
+            <AttendanceSummary
+              total={totalStudents}
+              present={
+                presentStudents
+              }
+              absent={
+                absentStudents
+              }
+              percentage={
+                attendancePercentage
+              }
+            />
+          )}
 
         {/* ==================================
             ATTENDANCE TABLE
         ================================== */}
 
-        <AttendanceTable
-          students={
-            filteredStudents
-          }
-          onAttendanceChange={
-            handleAttendance
-          }
-        />
+        {!isSunday &&
+          !holidayForDate && (
+            <AttendanceTable
+              students={
+                filteredStudents
+              }
+              onAttendanceChange={
+                handleAttendance
+              }
+            />
+          )}
 
         {/* ==================================
             SAVE / UPDATE BUTTON
         ================================== */}
 
-        <div className="mt-5 flex justify-end">
+        {!isSunday &&
+          !holidayForDate && (
+            <div className="mt-5 flex justify-end">
 
-          <button
-            type="button"
-            onClick={
-              attendanceExists
-                ? handleUpdateAttendance
-                : handleSaveAttendance
-            }
-            disabled={
-              saving ||
-              loading ||
-              students.length === 0
-            }
-            className={`
-              px-7
-              py-3
-              text-white
-              rounded-lg
-              font-semibold
-              transition
-              disabled:opacity-50
-              disabled:cursor-not-allowed
-              ${
-                attendanceExists
-                  ? "bg-blue-600 hover:bg-blue-700"
-                  : "bg-red-600 hover:bg-red-700"
-              }
-            `}
-          >
+              <button
+                type="button"
+                onClick={
+                  attendanceExists
+                    ? handleUpdateAttendance
+                    : handleSaveAttendance
+                }
+                disabled={
+                  saving ||
+                  loading ||
+                  students.length === 0
+                }
+                className={`
+                  px-7
+                  py-3
+                  text-white
+                  rounded-lg
+                  font-semibold
+                  transition
+                  disabled:opacity-50
+                  disabled:cursor-not-allowed
+                  ${
+                    attendanceExists
+                      ? "bg-blue-600 hover:bg-blue-700"
+                      : "bg-red-600 hover:bg-red-700"
+                  }
+                `}
+              >
+                {saving
+                  ? attendanceExists
+                    ? "Updating Attendance..."
+                    : "Saving Attendance..."
+                  : attendanceExists
+                    ? "Update Attendance"
+                    : "Save Attendance"}
+              </button>
 
-            {saving
-              ? attendanceExists
-                ? "Updating Attendance..."
-                : "Saving Attendance..."
-              : attendanceExists
-                ? "Update Attendance"
-                : "Save Attendance"}
-
-          </button>
-
-        </div>
+            </div>
+          )}
 
       </div>
 

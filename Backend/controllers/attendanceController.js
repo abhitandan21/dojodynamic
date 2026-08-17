@@ -1,5 +1,6 @@
 import Attendance from "../model/Attendance.js";
 import Student from "../model/Student.js";
+import ClassCalendar from "../model/ClassCalendar.js";
 
 /**
  * ==========================================
@@ -624,3 +625,346 @@ export const getAllStudents = async (
     });
   }
 };
+// ==========================================
+// ATTENDANCE REPORT HELPERS
+// ==========================================
+
+const getDateRange = (
+  startDate,
+  endDate
+) => {
+  const dates = [];
+
+  const current = new Date(
+    `${startDate}T00:00:00`
+  );
+
+  const end = new Date(
+    `${endDate}T00:00:00`
+  );
+
+  while (current <= end) {
+    const year =
+      current.getFullYear();
+
+    const month = String(
+      current.getMonth() + 1
+    ).padStart(2, "0");
+
+    const day = String(
+      current.getDate()
+    ).padStart(2, "0");
+
+    dates.push(
+      `${year}-${month}-${day}`
+    );
+
+    current.setDate(
+      current.getDate() + 1
+    );
+  }
+
+  return dates;
+};
+
+
+// ==========================================
+// GET ATTENDANCE REPORT BY DATE RANGE
+//
+// GET
+// /api/attendance/report?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
+// ==========================================
+
+export const getAttendanceReport =
+  async (req, res) => {
+    try {
+      const {
+        startDate,
+        endDate,
+      } = req.query;
+
+      // ======================================
+      // VALIDATION
+      // ======================================
+
+      if (!startDate || !endDate) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Start date and end date are required.",
+        });
+      }
+
+      if (startDate > endDate) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Start date cannot be greater than end date.",
+        });
+      }
+
+      // ======================================
+      // GET ALL DATES
+      // ======================================
+
+      const allDates =
+        getDateRange(
+          startDate,
+          endDate
+        );
+
+      // ======================================
+      // GET SPECIAL HOLIDAYS
+      // ======================================
+
+      const holidays =
+        await ClassCalendar.find({
+          date: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        }).lean();
+
+      const holidayMap =
+        new Map(
+          holidays.map(
+            (holiday) => [
+              holiday.date,
+              holiday.reason,
+            ]
+          )
+        );
+
+      // ======================================
+      // GET ATTENDANCE RECORDS
+      // ======================================
+
+      const attendance =
+        await Attendance.find({
+          date: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+        })
+          .sort({
+            date: 1,
+          })
+          .lean();
+
+      // ======================================
+      // GROUP ATTENDANCE BY DATE
+      // ======================================
+
+      const attendanceByDate =
+        new Map();
+
+      attendance.forEach(
+        (record) => {
+          if (
+            !attendanceByDate.has(
+              record.date
+            )
+          ) {
+            attendanceByDate.set(
+              record.date,
+              []
+            );
+          }
+
+          attendanceByDate
+            .get(record.date)
+            .push(record);
+        }
+      );
+
+      // ======================================
+      // DAILY REPORT
+      // ======================================
+
+      const dailyReport = [];
+
+      let totalPresent = 0;
+      let totalAbsent = 0;
+
+      let markedClassDays = 0;
+
+      for (const date of allDates) {
+
+        // ====================================
+        // SUNDAY
+        // ====================================
+
+        const day =
+          new Date(
+            `${date}T00:00:00`
+          ).getDay();
+
+        if (day === 0) {
+          dailyReport.push({
+            date,
+            type: "Sunday",
+            present: 0,
+            absent: 0,
+            total: 0,
+            percentage: 0,
+          });
+
+          continue;
+        }
+
+        // ====================================
+        // SPECIAL HOLIDAY
+        // ====================================
+
+        if (holidayMap.has(date)) {
+          dailyReport.push({
+            date,
+            type: "Holiday",
+            reason:
+              holidayMap.get(date),
+            present: 0,
+            absent: 0,
+            total: 0,
+            percentage: 0,
+          });
+
+          continue;
+        }
+
+        // ====================================
+        // ATTENDANCE FOR DATE
+        // ====================================
+
+        const records =
+          attendanceByDate.get(
+            date
+          ) || [];
+
+        // No attendance marked yet
+        if (records.length === 0) {
+          continue;
+        }
+
+        // ====================================
+        // COUNT
+        // ====================================
+
+        const present =
+          records.filter(
+            (record) =>
+              record.status ===
+              "Present"
+          ).length;
+
+        const absent =
+          records.filter(
+            (record) =>
+              record.status ===
+              "Absent"
+          ).length;
+
+        const total =
+          present + absent;
+
+        const percentage =
+          total === 0
+            ? 0
+            : Number(
+                (
+                  (present /
+                    total) *
+                  100
+                ).toFixed(2)
+              );
+
+        totalPresent += present;
+        totalAbsent += absent;
+
+        markedClassDays++;
+
+        dailyReport.push({
+          date,
+          type: "Class",
+          present,
+          absent,
+          total,
+          percentage,
+        });
+      }
+
+      // ======================================
+      // OVERALL SUMMARY
+      // ======================================
+
+      const totalAttendance =
+        totalPresent +
+        totalAbsent;
+
+      const overallPercentage =
+        totalAttendance === 0
+          ? 0
+          : Number(
+              (
+                (totalPresent /
+                  totalAttendance) *
+                100
+              ).toFixed(2)
+            );
+
+      // ======================================
+      // EXCLUDED DAYS
+      // ======================================
+
+      const sundayCount =
+        dailyReport.filter(
+          (item) =>
+            item.type === "Sunday"
+        ).length;
+
+      const holidayCount =
+        dailyReport.filter(
+          (item) =>
+            item.type === "Holiday"
+        ).length;
+
+      // ======================================
+      // SUCCESS
+      // ======================================
+
+      return res.json({
+        success: true,
+
+        period: {
+          startDate,
+          endDate,
+        },
+
+        summary: {
+          markedClassDays,
+          totalPresent,
+          totalAbsent,
+          totalAttendance,
+          percentage:
+            overallPercentage,
+        },
+
+        excluded: {
+          sundays: sundayCount,
+          holidays: holidayCount,
+        },
+
+        dailyReport,
+      });
+
+    } catch (error) {
+      console.error(
+        "Attendance Report Error:",
+        error
+      );
+
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };

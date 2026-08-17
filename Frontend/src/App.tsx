@@ -1,10 +1,12 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
 import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+
 import {
   BrowserRouter,
   Routes,
@@ -72,6 +74,7 @@ import ResultView from "./pages/ResultView";
 // ================================
 
 import AdminAttendance from "./pages/Attendance/AdminAttendance";
+import AttendanceReport from "./pages/Attendance/AttendanceReport";
 
 // ================================
 // Query Client
@@ -98,12 +101,14 @@ const App = () => (
           <Route element={<PublicLayout />}>
 
             {/* Main Landing Page */}
+
             <Route
               path="/"
               element={<Index />}
             />
 
             {/* Auth */}
+
             <Route
               path="/login"
               element={<Login />}
@@ -120,6 +125,7 @@ const App = () => (
             />
 
             {/* Student Dashboard */}
+
             <Route
               path="/dashboard"
               element={<Dashboard />}
@@ -131,6 +137,7 @@ const App = () => (
             />
 
             {/* Blog */}
+
             <Route
               path="/blog"
               element={<Blog />}
@@ -142,6 +149,7 @@ const App = () => (
             />
 
             {/* Student Corner */}
+
             <Route
               path="/students"
               element={<Students />}
@@ -183,6 +191,7 @@ const App = () => (
             />
 
             {/* Results */}
+
             <Route
               path="/result"
               element={<ResultSessions />}
@@ -203,9 +212,6 @@ const App = () => (
 
           {/* =====================================================
               ADMIN ENTRY
-              
-              This route is kept outside AdminLayout because
-              it is your existing Admin page / entry page.
           ===================================================== */}
 
           <Route
@@ -216,13 +222,10 @@ const App = () => (
 
           {/* =====================================================
               ADMIN PANEL
-              
               AdminLayout provides:
               - Admin Header
               - Admin Sidebar
               - Admin Navigation
-              
-              Every route inside this block gets the layout.
           ===================================================== */}
 
           <Route element={<AdminLayout />}>
@@ -253,6 +256,13 @@ const App = () => (
             <Route
               path="/admin/attendance"
               element={<AdminAttendance />}
+            />
+
+            {/* Attendance Report */}
+
+            <Route
+              path="/admin/attendance/report"
+              element={<AttendanceReport />}
             />
 
             {/* Admin Blog */}

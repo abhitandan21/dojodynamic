@@ -28,6 +28,7 @@ import certificateRoutes from "./routes/certificateRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import formRoutes from "./routes/formRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
+import calendarRoutes from "./routes/calendarRoutes.js";
 
 // enquiry import
 import enquiryRoutes from "./routes/enquiryRoutes.js";
@@ -109,6 +110,11 @@ app.use("/api/students", studentRoutes);
 
 // user login
 app.use("/api/auth", authRoutes);
+
+app.use(
+  "/api/calendar",
+  calendarRoutes
+);
 
 // env variables
 const PORT = process.env.PORT || 5000;

@@ -20,6 +20,11 @@ const AdminLayout = () => {
       icon: "✓",
     },
     {
+      name: "Attendance Report",
+      path: "/admin/attendance/report",
+      icon: "📊",
+    },
+    {
       name: "Competitions",
       path: "/competition",
       icon: "🏆",
@@ -47,25 +52,32 @@ const AdminLayout = () => {
       {/* =========================
           ADMIN TOP HEADER
       ========================== */}
+
       <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-gray-950 text-white shadow-lg">
 
         <div className="h-full flex items-center justify-between px-5">
 
           {/* Logo */}
+
           <div
             className="flex items-center gap-3 cursor-pointer"
-            onClick={() => navigate("/admin/dashboard")}
+            onClick={() =>
+              navigate("/admin/dashboard")
+            }
           >
+
             <img
               src="/logo.png"
               alt="AMAASA"
               className="w-11 h-11 object-contain"
               onError={(e) => {
-                e.currentTarget.style.display = "none";
+                e.currentTarget.style.display =
+                  "none";
               }}
             />
 
             <div>
+
               <h1 className="font-bold text-sm md:text-base leading-tight">
                 ABHISHEK MARTIAL ARTS
               </h1>
@@ -73,13 +85,17 @@ const AdminLayout = () => {
               <p className="text-red-500 font-bold text-xs md:text-sm">
                 AND SPORTS ACADEMY
               </p>
+
             </div>
+
           </div>
 
           {/* Right */}
+
           <div className="flex items-center gap-4">
 
             <div className="hidden sm:block text-right">
+
               <p className="text-sm font-semibold">
                 Admin
               </p>
@@ -87,6 +103,7 @@ const AdminLayout = () => {
               <p className="text-xs text-gray-400">
                 AMAASA
               </p>
+
             </div>
 
             <div className="w-9 h-9 rounded-full bg-blue-500 flex items-center justify-center font-bold">
@@ -103,6 +120,7 @@ const AdminLayout = () => {
       {/* =========================
           SIDEBAR
       ========================== */}
+
       <aside className="fixed top-16 left-0 bottom-0 z-40 w-56 bg-gray-950 text-white overflow-y-auto">
 
         <div className="px-5 pt-7">
@@ -143,17 +161,24 @@ const AdminLayout = () => {
 
 
           {/* Logout */}
+
           <div className="mt-8 pt-5 border-t border-gray-800">
 
             <button
               onClick={() => {
-                localStorage.removeItem("user");
+                localStorage.removeItem(
+                  "user"
+                );
+
                 navigate("/login");
               }}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-gray-300 hover:bg-red-600 hover:text-white transition"
             >
+
               <span>↪</span>
+
               Logout
+
             </button>
 
           </div>
@@ -166,6 +191,7 @@ const AdminLayout = () => {
       {/* =========================
           MAIN CONTENT
       ========================== */}
+
       <main className="ml-56 pt-16 min-h-screen">
 
         <Outlet />
