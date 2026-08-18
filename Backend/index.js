@@ -29,6 +29,9 @@ import adminRoutes from "./routes/adminRoutes.js";
 import formRoutes from "./routes/formRoutes.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import calendarRoutes from "./routes/calendarRoutes.js";
+import feeRoutes from "./routes/feeRoutes.js";
+import inventoryRoutes from "./routes/inventoryRoutes.js";
+
 
 // enquiry import
 import enquiryRoutes from "./routes/enquiryRoutes.js";
@@ -115,6 +118,15 @@ app.use(
   "/api/calendar",
   calendarRoutes
 );
+
+app.use(
+  "/api/fees",
+  feeRoutes
+);
+
+app.use("/api/inventory", inventoryRoutes);
+
+
 
 // env variables
 const PORT = process.env.PORT || 5000;

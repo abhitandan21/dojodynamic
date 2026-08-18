@@ -75,6 +75,11 @@ import ResultView from "./pages/ResultView";
 
 import AdminAttendance from "./pages/Attendance/AdminAttendance";
 import AttendanceReport from "./pages/Attendance/AttendanceReport";
+import AdminFees from "./pages/Fees/AdminFees";
+import StudentFeeHistory from "./pages/Fees/StudentFeeHistory";
+import FeeReports from "./pages/Fees/FeeReports";
+import AdminInventory from "./pages/Inventory/AdminInventory";
+
 
 // ================================
 // Query Client
@@ -264,6 +269,30 @@ const App = () => (
               path="/admin/attendance/report"
               element={<AttendanceReport />}
             />
+
+            {/* Admin Fees */}
+
+            <Route
+              path="/admin/fees"
+              element={<AdminFees />}
+            />
+
+            <Route
+              path="/admin/fees/history"
+              element={<StudentFeeHistory />}
+            />
+
+
+            <Route
+              path="/admin/fees/reports"
+              element={<FeeReports />}
+            />
+
+            <Route
+              path="/admin/inventory"
+              element={<AdminInventory />}
+            />
+
 
             {/* Admin Blog */}
 

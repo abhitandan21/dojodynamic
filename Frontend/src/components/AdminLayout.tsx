@@ -25,6 +25,26 @@ const AdminLayout = () => {
       icon: "📊",
     },
     {
+      name: "Fees",
+      path: "/admin/fees",
+      icon: "₹",
+    },
+    {
+      name: "Fee History",
+      path: "/admin/fees/history",
+      icon: "📋",
+    },
+    {
+      name: "Fee Reports",
+      path: "/admin/fees/reports",
+      icon: "📊",
+    },
+    {
+      name: "Inventory",
+      path: "/admin/inventory",
+      icon: "📦",
+    },
+    {
       name: "Competitions",
       path: "/competition",
       icon: "🏆",
@@ -137,10 +157,9 @@ const AdminLayout = () => {
                 key={item.name}
                 to={item.path}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${
-                    isActive
-                      ? "bg-red-600 text-white shadow-md"
-                      : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                  `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition ${isActive
+                    ? "bg-red-600 text-white shadow-md"
+                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
                   }`
                 }
               >
